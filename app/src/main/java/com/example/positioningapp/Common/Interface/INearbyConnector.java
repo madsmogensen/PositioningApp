@@ -1,12 +1,14 @@
 package com.example.positioningapp.Common.Interface;
 
 import com.example.positioningapp.Common.Data.PositioningSetup;
+import com.example.positioningapp.Common.Data.TrackedNode;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public interface INearbyConnector {
-    void NearbyLookup();
-    void connectToSetup(int ID);
-    void connectToSetup(String name);
-
+    HashMap<UUID,String> NearbyLookup();
+    PositioningSetup getPositions(UUID setupID, LocalDateTime time);
 }

@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void buttonConnectToServer(View view) {
         System.out.println("Button clicked");
-        connectToServer = !connectToServer;
+        //connectToServer = !connectToServer;
     }
 
     /*private void checkServer() {

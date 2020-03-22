@@ -1,6 +1,8 @@
 package com.example.positioningapp.Common.Data;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class PositioningSetup {
@@ -8,6 +10,7 @@ public class PositioningSetup {
     private String name = "";
     private UUID ID = UUID.randomUUID();
     private HashMap<UUID, Anchor> anchorPositions = new HashMap<>();
+    private HashMap<UUID, TrackedNode> nodePositions = new HashMap<>();
 
 
     public PositioningSetup(String name){
@@ -37,5 +40,11 @@ public class PositioningSetup {
 
     public String getName(){
         return name;
+    }
+
+    public List<TrackedNode> getNodes(LocalDateTime time) {
+        //returns the nodes at the current time of the setup
+        return null;
+
     }
 }

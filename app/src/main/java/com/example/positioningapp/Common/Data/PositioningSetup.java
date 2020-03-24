@@ -34,6 +34,10 @@ public class PositioningSetup {
         anchorPositions.put(newAnchor.ID,newAnchor);
     }
 
+    public void addNode(TrackedNode node){
+        nodePositions.put(node.getID(), node);
+    }
+
     public UUID getID(){
         return ID;
     }
@@ -42,9 +46,8 @@ public class PositioningSetup {
         return name;
     }
 
-    public List<TrackedNode> getNodes(LocalDateTime time) {
+    public HashMap<UUID, TrackedNode> getNodes() {
         //returns the nodes at the current time of the setup
-        return null;
-
+        return nodePositions;
     }
 }

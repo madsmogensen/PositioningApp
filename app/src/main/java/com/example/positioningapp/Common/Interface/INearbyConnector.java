@@ -10,5 +10,5 @@ import java.util.UUID;
 
 public interface INearbyConnector {
     HashMap<UUID,String> NearbyLookup();
-    PositioningSetup getPositions(UUID setupID, LocalDateTime time);
+    PositioningSetup getSetup(UUID setupID);
 }

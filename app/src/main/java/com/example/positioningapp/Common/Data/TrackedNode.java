@@ -10,11 +10,43 @@ public class TrackedNode {
     UUID ID = UUID.randomUUID();
     String name;
 
-    public TrackedNode(String name){
-        this.name = name;
+    public TrackedNode(String name) {
+        this.name = name != null ? name : ID.toString();
     }
 
+    public TreeMap<LocalDateTime, Coordinate> getCoordinates() {
+        return coordinates;
+    }
 
+    public void setCoordinates(TreeMap<LocalDateTime, Coordinate> coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    //Add a new coordinate at the current time
+    public void addCoordinate(Coordinate newCoordinate){
+        this.coordinates.put(LocalDateTime.now(),newCoordinate);
+    }
+
+    //Add a new coordinate at a specified time
+    public void addTimedCoordinate(LocalDateTime time, Coordinate coordinate){
+        this.coordinates.put(time,coordinate);
+    }
+
+    public UUID getID() {
+        return ID;
+    }
+
+    public void setID(UUID ID) {
+        this.ID = ID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 
 }

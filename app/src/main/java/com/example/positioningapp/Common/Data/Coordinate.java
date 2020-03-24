@@ -35,4 +35,9 @@ public class Coordinate {
     public void setZ(int z) {
         this.z = z;
     }
+
+    @Override
+    public String toString(){
+        return "Coordinate: "+ x + "," + y + "," + z;
+    }
 }

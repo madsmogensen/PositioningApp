@@ -9,6 +9,7 @@ public class TrackedNode {
     TreeMap<LocalDateTime, Coordinate> coordinates = new TreeMap<>();
     UUID ID = UUID.randomUUID();
     String name;
+    int index = 0;
 
     public TrackedNode(String name) {
         this.name = name != null ? name : ID.toString();
@@ -34,6 +35,10 @@ public class TrackedNode {
 
     public UUID getID() {
         return ID;
+    }
+
+    public int getIndex(){
+        return index;
     }
 
     public void setID(UUID ID) {

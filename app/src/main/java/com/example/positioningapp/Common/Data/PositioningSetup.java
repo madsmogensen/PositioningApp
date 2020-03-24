@@ -50,4 +50,13 @@ public class PositioningSetup {
         //returns the nodes at the current time of the setup
         return nodePositions;
     }
+
+    public LocalDateTime getStartTime(){
+        LocalDateTime earliest = LocalDateTime.now();
+        for(TrackedNode node : nodePositions.values()){
+            LocalDateTime current = node.getCoordinates().keySet().iterator().next();
+            if(current.isBefore(earliest)){ earliest = current; }
+        }
+        return earliest;
+    }
 }

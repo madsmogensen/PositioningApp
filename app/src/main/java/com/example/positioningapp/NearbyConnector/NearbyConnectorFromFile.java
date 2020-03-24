@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -42,6 +43,11 @@ public class NearbyConnectorFromFile implements INearbyConnector {
         return setups.get(setupID);
     }
 
+    @Override
+    public LocalDateTime getStartTime() {
+        return null;
+    }
+
 
     //Load file is not loading the file as one node with multiple timed coords, but all the cords are localtime.now
     private void loadFile(PositioningSetup setup, Context context){
@@ -61,6 +67,9 @@ public class NearbyConnectorFromFile implements INearbyConnector {
                 newNode.addCoordinate(newCoordinate);
             }
             setup.addNode(newNode);
+            for(Coordinate cord : newNode.getCoordinates().values()){
+                System.out.println(cord.toString());
+            }
         }catch(Exception e){
             System.out.println("error in new file?");
             System.out.println(e);

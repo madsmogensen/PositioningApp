@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.UUID;
@@ -63,7 +64,7 @@ public class NearbyConnectorFromFile implements INearbyConnector {
             br.readLine(); //skip first line by reading it before while
             while((line = br.readLine()) != null){
                 String[] splitLine = line.split(cvsSplitBy);
-                Coordinate newCoordinate = new Coordinate(Integer.parseInt(splitLine[1]),Integer.parseInt(splitLine[2]),Integer.parseInt(splitLine[3]));
+                Coordinate newCoordinate = retrieveDataFromLine(splitLine);
                 newNode.addCoordinate(newCoordinate);
             }
             setup.addNode(newNode);
@@ -74,18 +75,16 @@ public class NearbyConnectorFromFile implements INearbyConnector {
             System.out.println("error in new file?");
             System.out.println(e);
         }
-
-/*
-        try {
-            br = new BufferedReader(new FileReader(fileLocation));
-            while((line = br.readLine()) != null){
-                String[] splitLine = line.split(cvsSplitBy);
-                Coordinate newCoordinate = new Coordinate(Integer.parseInt(splitLine[1]),Integer.parseInt(splitLine[2]),Integer.parseInt(splitLine[3]));
-                newNode.addCoordinate(newCoordinate);
-            }
-            setup.addNode(newNode);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
+
+    private Coordinate retrieveDataFromLine(String[] splitLine){
+        int x = Integer.parseInt(splitLine[1]);
+        int y = Integer.parseInt(splitLine[2]);
+        int z = Integer.parseInt(splitLine[3]);
+        long time = Date.valueOf(splitLine[4]).getTime();
+        Coordinate newCoord = new Coordinate(x,y,z);
+        newCoord.setDateTime(time);
+        return newCoord;
+    }
+
 }

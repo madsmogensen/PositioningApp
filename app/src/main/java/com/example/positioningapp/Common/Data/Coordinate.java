@@ -1,16 +1,28 @@
 package com.example.positioningapp.Common.Data;
 
+import java.util.Date;
+
 public class Coordinate {
 
     private int x;
     private int y;
     private int z;
+    private long dateTime;
+    private long relativeTime;
 
     public Coordinate(int x, int y, int z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
+
+    public long getRelativeTime(){ return relativeTime; }
+
+    public void setRelativeTime(long relativeTime){ this.relativeTime = relativeTime; }
+
+    public long getDateTime(){ return dateTime; }
+
+    public void setDateTime(long dateTime){ this.dateTime = dateTime; }
 
     public int getX() {
         return x;
@@ -38,6 +50,6 @@ public class Coordinate {
 
     @Override
     public String toString(){
-        return "Coordinate: "+ x + "," + y + "," + z;
+        return "Coordinate: " + x + "," + y + "," + z;
     }
 }

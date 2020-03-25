@@ -30,9 +30,10 @@ public class MainActivity extends AppCompatActivity {
     INearbyConnector nearbyConnection;
     Thread t;
     PositioningSetup currentSetup;
-    LocalDateTime currentTime;
-    LocalDateTime lastTime;
+    long currentTime;
+    long lastTime;
     List<Coordinate> drawNodes = new ArrayList<>();
+    long startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
 
         UUID id = nearbyConnection.NearbyLookup().keySet().iterator().next();
         currentSetup = nearbyConnection.getSetup(id);
-        currentTime = currentSetup.getStartTime();
-        lastTime = LocalDateTime.now();
+        //currentTime = currentSetup.getStartTime();
+        startTime = System.nanoTime();
         //serverConnection = registerIServerConnector();
         //nearbyConnection = registerINearbyConnector();
     }

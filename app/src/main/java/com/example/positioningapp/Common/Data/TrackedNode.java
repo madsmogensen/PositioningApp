@@ -26,13 +26,13 @@ public class TrackedNode {
 
     //Add a new coordinate at the current time
     public void addCoordinate(Coordinate newCoordinate){
-        this.coordinates.put(System.currentTimeMillis(),newCoordinate);
+        this.coordinates.put(System.nanoTime(),newCoordinate);
         updateCoordinateRelativeTime(newCoordinate);
     }
 
     //Add a new coordinate at a specified time
     public void addTimedCoordinate(LocalDateTime time, Coordinate coordinate){
-        this.coordinates.put(System.currentTimeMillis(),coordinate);
+        this.coordinates.put(System.nanoTime(),coordinate);
     }
 
     public UUID getID() {

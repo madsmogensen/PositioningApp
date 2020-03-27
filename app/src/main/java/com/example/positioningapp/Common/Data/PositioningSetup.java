@@ -51,12 +51,24 @@ public class PositioningSetup {
         return nodePositions;
     }
 
-    /*public LocalDateTime getStartTime(){
-        LocalDateTime earliest = LocalDateTime.now();
+    public int getMinCoordinateValue(){
+        int minValue = Integer.MAX_VALUE;
         for(TrackedNode node : nodePositions.values()){
-            LocalDateTime current = node.getCoordinates().keySet().iterator().next();
-            if(current.isBefore(earliest)){ earliest = current; }
+            for(Coordinate coordinate : node.getCoordinates().values()){
+                minValue = Math.min(minValue, Math.min(coordinate.getX(),coordinate.getY()));
+            }
         }
-        return earliest;
-    }*/
+        return minValue;
+    }
+
+    public int getMaxCoordinateValue(){
+        int maxValue = Integer.MIN_VALUE;
+        for(TrackedNode node : nodePositions.values()){
+            for(Coordinate coordinate : node.getCoordinates().values()){
+                maxValue = Math.max(maxValue, Math.max(coordinate.getX(),coordinate.getY()));
+            }
+        }
+        return maxValue;
+    }
+
 }

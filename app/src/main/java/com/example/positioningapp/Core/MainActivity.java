@@ -16,24 +16,26 @@ import com.example.positioningapp.NearbyConnector.NearbyConnectorFromFile;
 import com.example.positioningapp.R;
 import com.example.positioningapp.ServerConnector.ServerConnector;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.TreeMap;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     public TextView label;
     public Button button;
+    public CanvasView customCanvas;
     IServerConnector serverConnection;
     INearbyConnector nearbyConnection;
     Thread t;
     PositioningSetup currentSetup;
-    long currentTime;
-    long lastTime;
+    long updateStartTime;
+    long updateEndTime;
+    long updateTimeElapsed;
+    long updateRelativeTime = 0;
     List<Coordinate> drawNodes = new ArrayList<>();
-    long startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +43,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initialize();
 
+
         //Thread to run the while loop
         t = new Thread() {
             @Override
             public void run(){
                 try{
                     while(!isInterrupted()){
-                        Thread.sleep(10);
+                        if(updateTimeElapsed < 1000000){
+                            t.sleep((10000000 - updateTimeElapsed)/1000000);
+                        }
+
                         runOnUiThread(new Runnable(){
                             @Override
                             public void run(){
@@ -65,26 +71,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void update() {
+        updateStartTime = System.nanoTime();
         //label.setText(serverConnection.getStatus());
         if (label.getText().equals("false")) {
             t.interrupt();
         }
 
-        /*
-        if(currentSetup != null){
-            label.setText(currentSetup.getNodes().values().iterator().next().getCoordinates().values().iterator().next().toString());
-        }*/
         updateNodes();
-
-        //USE THIS AS TIME INSTEAD!!!!
-        System.nanoTime();
+        updateEndTime = System.nanoTime();
+        updateTimeElapsed = updateEndTime - updateStartTime;
+        updateRelativeTime += updateTimeElapsed;
     }
 
     private void updateNodes(){
+        drawNodes.clear();
         for(TrackedNode node : currentSetup.getNodes().values()){
-            drawNodes.add(node.getCoordinates().higherEntry(currentTime).getValue());
+            TreeMap<Long, Coordinate> coordinates = node.getCoordinates();
+            TreeMap.Entry<Long,Coordinate> entry = coordinates.higherEntry(updateRelativeTime);
+            if(entry != null){drawNodes.add(entry.getValue());}
         }
-        //currentTime
+        updateCanvas();
+    }
+
+    private void updateCanvas(){
+        int minValue = currentSetup.getMinCoordinateValue();
+        int maxValue = currentSetup.getMaxCoordinateValue();
+        customCanvas.updateNodes(drawNodes, minValue, maxValue);
     }
 
     public void buttonConnectToServer(View view) {
@@ -95,16 +107,13 @@ public class MainActivity extends AppCompatActivity {
     private void initialize() {
         label = findViewById(R.id.outputLabel);
         button = findViewById(R.id.ServerButton);
+        customCanvas = (CanvasView)findViewById(R.id.CanvasView);
 
         serverConnection = new ServerConnector();
         nearbyConnection = new NearbyConnectorFromFile(this);
 
         UUID id = nearbyConnection.NearbyLookup().keySet().iterator().next();
         currentSetup = nearbyConnection.getSetup(id);
-        //currentTime = currentSetup.getStartTime();
-        startTime = System.nanoTime();
-        //serverConnection = registerIServerConnector();
-        //nearbyConnection = registerINearbyConnector();
     }
 
     private IServerConnector registerIServerConnector() {

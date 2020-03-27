@@ -13,10 +13,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Date;
-import java.time.LocalDateTime;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.Date;
 
 public class NearbyConnectorFromFile implements INearbyConnector {
 
@@ -45,7 +46,7 @@ public class NearbyConnectorFromFile implements INearbyConnector {
     }
 
     @Override
-    public LocalDateTime getStartTime() {
+    public Date getStartTime() {
         return null;
     }
 
@@ -58,7 +59,6 @@ public class NearbyConnectorFromFile implements INearbyConnector {
         BufferedReader br = null;
         String line = "";
         String cvsSplitBy = ";";
-
         try{
             br = new BufferedReader(new InputStreamReader(context.getAssets().open(fileLocation)));
             br.readLine(); //skip first line by reading it before while
@@ -68,12 +68,14 @@ public class NearbyConnectorFromFile implements INearbyConnector {
                 newNode.addCoordinate(newCoordinate);
             }
             setup.addNode(newNode);
-            for(Coordinate cord : newNode.getCoordinates().values()){
+            /*for(Coordinate cord : newNode.getCoordinates().values()){
                 System.out.println(cord.toString());
-            }
+            }*/
         }catch(Exception e){
             System.out.println("error in new file?");
-            System.out.println(e);
+            for(StackTraceElement stackTrace : e.getStackTrace()){
+                System.out.println(stackTrace);
+            }
         }
     }
 
@@ -81,9 +83,17 @@ public class NearbyConnectorFromFile implements INearbyConnector {
         int x = Integer.parseInt(splitLine[1]);
         int y = Integer.parseInt(splitLine[2]);
         int z = Integer.parseInt(splitLine[3]);
-        long time = Date.valueOf(splitLine[4]).getTime();
         Coordinate newCoord = new Coordinate(x,y,z);
-        newCoord.setDateTime(time);
+
+        try{
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+            Date coordinateDate = df.parse(splitLine[4].replace(".",":"));
+            long time = coordinateDate.getTime();
+            newCoord.setDateTime(time);
+        }catch(Exception e){
+            System.out.println(e);
+            System.out.println(e.getStackTrace()[1]);
+        }
         return newCoord;
     }
 

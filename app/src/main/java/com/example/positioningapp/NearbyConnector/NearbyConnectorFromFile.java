@@ -73,6 +73,7 @@ public class NearbyConnectorFromFile implements INearbyConnector {
             }*/
         }catch(Exception e){
             System.out.println("error in new file?");
+            System.out.println(e);
             for(StackTraceElement stackTrace : e.getStackTrace()){
                 System.out.println(stackTrace);
             }
@@ -84,12 +85,13 @@ public class NearbyConnectorFromFile implements INearbyConnector {
         int y = Integer.parseInt(splitLine[2]);
         int z = Integer.parseInt(splitLine[3]);
         Coordinate newCoord = new Coordinate(x,y,z);
-
         try{
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+            //System.out.println("As string: " + splitLine[4].replace(".",":"));
             Date coordinateDate = df.parse(splitLine[4].replace(".",":"));
-            long time = coordinateDate.getTime();
-            newCoord.setDateTime(time);
+            //System.out.println("As Date  : " + df.format(coordinateDate));
+            newCoord.setDateTime(coordinateDate);
+            //System.out.println("Get Date : " + df.format(newCoord.getDateTime()));
         }catch(Exception e){
             System.out.println(e);
             System.out.println(e.getStackTrace()[1]);

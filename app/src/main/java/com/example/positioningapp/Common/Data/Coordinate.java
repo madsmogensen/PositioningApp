@@ -7,8 +7,8 @@ public class Coordinate {
     private int x;
     private int y;
     private int z;
-    private long dateTime;
-    private long relativeTime;
+    private Date dateTime;
+    private Date relativeTime;
 
     public Coordinate(int x, int y, int z) {
         this.x = x;
@@ -16,13 +16,13 @@ public class Coordinate {
         this.z = z;
     }
 
-    public long getRelativeTime(){ return relativeTime; }
+    public Date getRelativeTime(){ return relativeTime; }
 
-    public void setRelativeTime(long relativeTime){ this.relativeTime = relativeTime; }
+    public void setRelativeTime(Date relativeTime){ this.relativeTime = relativeTime; }
 
-    public long getDateTime(){ return dateTime; }
+    public Date getDateTime(){ return dateTime; }
 
-    public void setDateTime(long dateTime){ this.dateTime = dateTime; }
+    public void setDateTime(Date dateTime){ this.dateTime = dateTime; }
 
     public int getX() {
         return x;

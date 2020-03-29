@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class TrackedNode {
 
-    TreeMap<Long, Coordinate> coordinates = new TreeMap<>();
+    TreeMap<Date, Coordinate> coordinates = new TreeMap<>();
     UUID ID = UUID.randomUUID();
     String name;
     int index = 0;
@@ -16,23 +16,23 @@ public class TrackedNode {
         this.name = name != null ? name : ID.toString();
     }
 
-    public TreeMap<Long, Coordinate> getCoordinates() {
+    public TreeMap<Date, Coordinate> getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(TreeMap<Long, Coordinate> coordinates) {
+    public void setCoordinates(TreeMap<Date, Coordinate> coordinates) {
         this.coordinates = coordinates;
     }
 
     //Add a new coordinate at the current time
     public void addCoordinate(Coordinate newCoordinate){
-        this.coordinates.put(System.nanoTime(),newCoordinate);
         updateCoordinateRelativeTime(newCoordinate);
+        this.coordinates.put(newCoordinate.getDateTime(),newCoordinate);
     }
 
     //Add a new coordinate at a specified time
     public void addTimedCoordinate(LocalDateTime time, Coordinate coordinate){
-        this.coordinates.put(System.nanoTime(),coordinate);
+        this.coordinates.put(new Date(System.nanoTime()),coordinate);
     }
 
     public UUID getID() {
@@ -56,11 +56,17 @@ public class TrackedNode {
     }
 
     private void updateCoordinateRelativeTime(Coordinate newCoordinate){
-        if(coordinates.size() == 0){ newCoordinate.setRelativeTime(0); return; }
-        long previousNodeTime = coordinates.lastKey();
-        long previousNodeRelativeTime = coordinates.lastEntry().getValue().getRelativeTime();
-        long newNodeTime = newCoordinate.getDateTime();
-        long timeElapsed = newNodeTime-previousNodeTime;
-        newCoordinate.setRelativeTime(previousNodeRelativeTime+timeElapsed);
+        try{
+            if(coordinates.size() == 0){ newCoordinate.setRelativeTime(new Date(0)); return; }
+            Date previousNodeTime = coordinates.lastKey();
+            Date previousNodeRelativeTime = coordinates.lastEntry().getValue().getRelativeTime();
+            Date newNodeTime = newCoordinate.getDateTime();
+            Date timeElapsed = new Date(newNodeTime.getTime()-previousNodeTime.getTime());
+            newCoordinate.setRelativeTime(new Date(previousNodeRelativeTime.getTime()+timeElapsed.getTime()));
+        }catch(Exception e){
+            System.out.println("Error in updateCoordinateRelativeTime");
+            System.out.println(e);
+        }
+
     }
 }

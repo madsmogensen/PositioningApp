@@ -54,7 +54,7 @@ public class CanvasView extends View {
 
         if(drawNodes == null){return;}
         for(Coordinate coord : drawNodes){
-            System.out.println("drawing circle at " + coord.getX() + "," + coord.getY());
+            //System.out.println("drawing circle at " + coord.getX() + "," + coord.getY());
             canvas.drawCircle(coord.getX(),coord.getY(),5,mPaint);
         }
     }

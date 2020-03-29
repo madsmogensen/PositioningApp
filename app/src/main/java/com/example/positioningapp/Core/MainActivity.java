@@ -16,7 +16,10 @@ import com.example.positioningapp.NearbyConnector.NearbyConnectorFromFile;
 import com.example.positioningapp.R;
 import com.example.positioningapp.ServerConnector.ServerConnector;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.TreeMap;
@@ -31,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
     INearbyConnector nearbyConnection;
     Thread t;
     PositioningSetup currentSetup;
-    long updateStartTime;
-    long updateEndTime;
-    long updateTimeElapsed;
-    long updateRelativeTime = 0;
+    Date updateStartTime;
+    Date updateEndTime;
+    Date updateTimeElapsed = new Date(99999999);
+    Date updateRelativeTime = new Date(0);
     List<Coordinate> drawNodes = new ArrayList<>();
 
     @Override
@@ -50,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
             public void run(){
                 try{
                     while(!isInterrupted()){
-                        if(updateTimeElapsed < 1000000){
-                            t.sleep((10000000 - updateTimeElapsed)/1000000);
+                        if(updateTimeElapsed.getTime() < 1000000){
+                            t.sleep((10000000 - updateTimeElapsed.getTime())/1000000);
                         }
 
                         runOnUiThread(new Runnable(){
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 }catch(Exception e){
+                    System.out.println("Error in thread t: run() from onCreate");
                     System.out.println(e);
                 }
             }
@@ -71,23 +75,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void update() {
-        updateStartTime = System.nanoTime();
+        updateStartTime = new Date(System.nanoTime());
         //label.setText(serverConnection.getStatus());
         if (label.getText().equals("false")) {
             t.interrupt();
         }
 
         updateNodes();
-        updateEndTime = System.nanoTime();
-        updateTimeElapsed = updateEndTime - updateStartTime;
-        updateRelativeTime += updateTimeElapsed;
+        updateEndTime = new Date(System.nanoTime());
+        try{
+            updateTimeElapsed = new Date(updateEndTime.getTime() - updateStartTime.getTime());
+            updateRelativeTime.setTime(updateRelativeTime.getTime() + updateTimeElapsed.getTime());
+        }catch(Exception e){
+            System.out.println("Error in update");
+            System.out.println(e);
+        }
+
     }
 
     private void updateNodes(){
         drawNodes.clear();
         for(TrackedNode node : currentSetup.getNodes().values()){
-            TreeMap<Long, Coordinate> coordinates = node.getCoordinates();
-            TreeMap.Entry<Long,Coordinate> entry = coordinates.higherEntry(updateRelativeTime);
+            TreeMap<Date, Coordinate> coordinates = node.getCoordinates();
+            TreeMap.Entry<Date,Coordinate> entry = coordinates.higherEntry(updateRelativeTime);
+            /* //Used for printing coordinate times and relative coordinate times
+            for(Date key : coordinates.keySet()){
+                String datePattern = "YYYY-MM-dd HH:mm:ss:SSS";
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+                System.out.println(coordinates.get(key).getX() + "," + coordinates.get(key).getY() + " | " + simpleDateFormat.format(key) + " | " + simpleDateFormat.format(coordinates.get(key).getRelativeTime()) );
+            }*/
             if(entry != null){drawNodes.add(entry.getValue());}
         }
         updateCanvas();
@@ -97,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         int minValue = currentSetup.getMinCoordinateValue();
         int maxValue = currentSetup.getMaxCoordinateValue();
         customCanvas.updateNodes(drawNodes, minValue, maxValue);
+        label.setText(drawNodes.get(0).toString());
     }
 
     public void buttonConnectToServer(View view) {

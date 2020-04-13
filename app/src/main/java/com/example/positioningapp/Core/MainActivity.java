@@ -4,41 +4,26 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.example.positioningapp.Common.Data.Coordinate;
-import com.example.positioningapp.Common.Data.PositioningSetup;
-import com.example.positioningapp.Common.Data.TrackedNode;
+import com.example.positioningapp.Common.Data.Constants;
+import com.example.positioningapp.Common.Data.Setup;
+import com.example.positioningapp.Common.Interface.ActionListener;
+import com.example.positioningapp.Common.Interface.IGUI;
 import com.example.positioningapp.Common.Interface.INearbyConnector;
 import com.example.positioningapp.Common.Interface.IServerConnector;
-import com.example.positioningapp.NearbyConnector.NearbyConnectorFromFile;
+import com.example.positioningapp.GUI.GuiIntermediary;
+import com.example.positioningapp.NearbyConnector.DataIntermediary;
 import com.example.positioningapp.R;
-import com.example.positioningapp.ServerConnector.ServerConnector;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.ServiceLoader;
-import java.util.TreeMap;
-import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ActionListener {
 
-    public TextView label;
-    public Button button;
-    public CanvasView customCanvas;
     IServerConnector serverConnection;
-    INearbyConnector nearbyConnection;
+    INearbyConnector nearbyConnector;
+    IGUI GUI;
     Thread t;
-    PositioningSetup currentSetup;
-    Date updateStartTime;
-    Date updateEndTime;
-    Date updateTimeElapsed = new Date(99999999);
-    Date updateRelativeTime = new Date(0);
-    List<Coordinate> drawNodes = new ArrayList<>();
+    Setup currentSetup = new Setup();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,23 +31,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initialize();
 
-
         //Thread to run the while loop
         t = new Thread() {
             @Override
             public void run(){
                 try{
                     while(!isInterrupted()){
-                        if(updateTimeElapsed.getTime() < 1000000){
-                            t.sleep((10000000 - updateTimeElapsed.getTime())/1000000);
-                        }
-
-                        runOnUiThread(new Runnable(){
-                            @Override
-                            public void run(){
-                                update();
-                            }
-                        });
+                        update();
+                        t.sleep(100);
                     }
                 }catch(Exception e){
                     System.out.println("Error in thread t: run() from onCreate");
@@ -70,67 +46,35 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-
         t.start();
     }
 
     private void update() {
-        updateStartTime = new Date(System.nanoTime());
-        //label.setText(serverConnection.getStatus());
-        if (label.getText().equals("false")) {
-            t.interrupt();
-        }
-
-        updateNodes();
-        updateEndTime = new Date(System.nanoTime());
-        try{
-            updateTimeElapsed = new Date(updateEndTime.getTime() - updateStartTime.getTime());
-            updateRelativeTime.setTime(updateRelativeTime.getTime() + updateTimeElapsed.getTime());
-        }catch(Exception e){
-            System.out.println("Error in update");
-            System.out.println(e);
-        }
-
-    }
-
-    private void updateNodes(){
-        drawNodes.clear();
-        for(TrackedNode node : currentSetup.getNodes().values()){
-            TreeMap<Date, Coordinate> coordinates = node.getCoordinates();
-            TreeMap.Entry<Date,Coordinate> entry = coordinates.higherEntry(updateRelativeTime);
-            /* //Used for printing coordinate times and relative coordinate times
-            for(Date key : coordinates.keySet()){
-                String datePattern = "YYYY-MM-dd HH:mm:ss:SSS";
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
-                System.out.println(coordinates.get(key).getX() + "," + coordinates.get(key).getY() + " | " + simpleDateFormat.format(key) + " | " + simpleDateFormat.format(coordinates.get(key).getRelativeTime()) );
-            }*/
-            if(entry != null){drawNodes.add(entry.getValue());}
-        }
-        updateCanvas();
-    }
-
-    private void updateCanvas(){
-        int minValue = currentSetup.getMinCoordinateValue();
-        int maxValue = currentSetup.getMaxCoordinateValue();
-        customCanvas.updateNodes(drawNodes, minValue, maxValue);
-        label.setText(drawNodes.get(0).toString());
+        nearbyConnector.getUpdate(currentSetup);
+        GUI.update(currentSetup);
     }
 
     public void buttonConnectToServer(View view) {
         System.out.println("Button clicked");
-        //connectToServer = !connectToServer;
+        nearbyConnector.stop();
+        t.interrupt();
     }
 
     private void initialize() {
-        label = findViewById(R.id.outputLabel);
-        button = findViewById(R.id.ServerButton);
-        customCanvas = (CanvasView)findViewById(R.id.CanvasView);
+        //Set constants in Common
+        Constants.context = this;
+        Constants.HUDLayout = findViewById(R.id.HUDLinearLayout);
+        Constants.DataLayout = findViewById(R.id.DataLayout);
 
-        serverConnection = new ServerConnector();
-        nearbyConnection = new NearbyConnectorFromFile(this);
+        //Instantiate other Modules
+        //serverConnection = new ServerConnector();
+        nearbyConnector = new DataIntermediary();
+        GUI = new GuiIntermediary(this);
+    }
 
-        UUID id = nearbyConnection.NearbyLookup().keySet().iterator().next();
-        currentSetup = nearbyConnection.getSetup(id);
+    @Override
+    public void actionPerformed(){
+        buttonConnectToServer(null);
     }
 
     private IServerConnector registerIServerConnector() {

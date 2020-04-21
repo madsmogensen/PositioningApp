@@ -52,6 +52,7 @@ public class DataDrawerBITMAP extends View{
 
         canvasData = new CanvasData();
 
+        //move to somewhere else
         blackPaint = new Paint();
         blackPaint.setAntiAlias(true);
         blackPaint.setColor(Color.BLACK);
@@ -94,37 +95,32 @@ public class DataDrawerBITMAP extends View{
     Circle firstNode;
 
     //ToDo figure out why pan is not smooth while zoom is?
-    //ToDo then fix the line/path drawing
-    //ToDo maybe use PointF class?
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Path path = new Path();
-        List<Line> lines = new ArrayList<>();
         Coordinate previousCoordinate = null;
 
-        boolean first = true;
         for(Circle node : nodesToDraw){
             //get coordinate locations
             int actualX = node.getX();
             int actualY = node.getY();
+            //invert y
+            actualY = canvas.getHeight()-actualY;
             int offsetWidth = node.getBitmap().getWidth()/2;
             int offsetHeight = node.getBitmap().getHeight()/2;
-            int drawX = actualX-offsetWidth;
-            int drawY = actualY-offsetHeight;
+            int bitmapCenterX = actualX-offsetWidth;
+            int bitmapCenterY = actualY-offsetHeight;
 
-            /*if(!first){
-                Coordinate start = lines.get(lines.size()-1).end;
-                Coordinate end = new Coordinate(drawX,drawY,0);
-                Line newLine = new Line(start,end);
-                lines.add(newLine);
-            }else{
-                first = false;
-                Line emptyLine = new Line(new Coordinate(drawX,drawY,0),new Coordinate(drawX,drawY,0));
-                lines.add(emptyLine);
-            }*/
+            //center canvas on first node drawn
+            if(firstNode == null){
+                firstNode = node;
+                canvasData.matrix.setTranslate((canvas.getWidth()/2)-bitmapCenterX,(canvas.getHeight()/2)-bitmapCenterY);
+            }
 
+            //update matrices
+            matrix.setTranslate(actualX, actualY);
+            matrix.postConcat(canvasData.matrix);
 
             //get numbers for path
             float[] values = new float[9];
@@ -132,71 +128,14 @@ public class DataDrawerBITMAP extends View{
             float globalX = values[Matrix.MTRANS_X];
             float globalY = values[Matrix.MTRANS_Y];
 
-            /*//Add to path
-            if(first){
-                path.moveTo(globalX,globalY);
-                first = false;
-                continue;
-            }else{
-                path.lineTo(globalX,globalY);
-            }*/
-
-
-            //get first node of the setup
-            if(firstNode == null){
-                firstNode = node;
-                canvasData.matrix.setTranslate((canvas.getWidth()/2)-drawX,(canvas.getHeight()/2)-drawY);
-            }
-
-            //update matrices
-            matrix.setTranslate(drawX, drawY);
-            matrix.postConcat(canvasData.matrix);
-
-
+            //draw line between nodes (skip first)
             if(previousCoordinate != null){
-                Line newLine = new Line(previousCoordinate, new Coordinate(drawX,drawY,0));
-                float startX = newLine.getStart().getX();
-                float startY = newLine.getStart().getY();
-                float endX = newLine.getEnd().getX();
-                float endY = newLine.getEnd().getY();
-                canvas.drawLine(startX+globalX+offsetWidth,startY+globalY+offsetHeight,endX+globalX+offsetWidth,endY+globalY+offsetHeight,blackPaint);
-
+                canvas.drawLine(previousCoordinate.getX(),previousCoordinate.getY(),globalX,globalY,blackPaint);
             }
-            //Line testLine = new Line(new Coordinate(0,0,0), new Coordinate(500,500,0));
-            //lines.add(testLine);
 
-            //draw lines, draw node
-            //canvas.drawPath(path, blackPaint);
-            /*for(Line line : lines){
-                float startX = line.getStart().getX();
-                float startY = line.getStart().getY();
-                float endX = line.getEnd().getX();
-                float endY = line.getEnd().getY();
-                canvas.drawLine(startX+globalX+offsetWidth,startY+globalY+offsetHeight,endX+globalX+offsetWidth,endY+globalY+offsetHeight,blackPaint);
-                //canvas.drawLine(line.getStart().getX(),line.getStart().getY(),line.getEnd().getX(),line.getEnd().getY(),blackPaint);
-            }*/
-
-            //ToDo experiment with this; draw bitmap and lines at locations, then translate canvas afterwards?
-            // - maybe used  canvas.scale as well?
-            //canvas.translate(dx,dy);
-            canvas.drawBitmap(node.getBitmap(), matrix, node.getColor());
-            previousCoordinate = new Coordinate(drawX,drawY, 0);
+            canvas.drawBitmap(node.getBitmap(), globalX-offsetWidth, globalY-offsetHeight, node.getColor());
+            previousCoordinate = new Coordinate(Math.round(globalX),Math.round(globalY), 0);
         }
-
-    }
-
-    //@Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
-    }
-
-    //@Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
-
-    }
-
-    //@Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
 
     }
 

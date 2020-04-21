@@ -2,13 +2,11 @@ package com.example.positioningapp.Core;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
 import com.example.positioningapp.Common.Data.Constants;
-import com.example.positioningapp.Common.Data.Node;
 import com.example.positioningapp.Common.Data.Setup;
 import com.example.positioningapp.Common.Interface.ActionListener;
 import com.example.positioningapp.Common.Interface.IGUI;
@@ -18,6 +16,8 @@ import com.example.positioningapp.GUI.GuiIntermediary;
 import com.example.positioningapp.NearbyConnector.DataIntermediary;
 import com.example.positioningapp.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ServiceLoader;
 
 public class MainActivity extends AppCompatActivity implements ActionListener {
@@ -25,10 +25,11 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
     IServerConnector serverConnection;
     INearbyConnector nearbyConnector;
     IGUI GUI;
-    Thread t;
     Setup currentSetup = new Setup();
     Handler mHandler;
     int mInterval = 100;
+
+    List<String> buttonEvents = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,24 +39,6 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
 
         mHandler = new Handler();
         startRepeatingTask();
-        /*//Thread to run the while loop
-        t = new Thread() {
-            @Override
-            public void run(){
-                try{
-                    while(!isInterrupted()){
-                        update();
-                        t.sleep(100);
-                    }
-                }catch(Exception e){
-                    System.out.println("Error in thread t: run() from onCreate");
-                    System.out.println(e);
-                    e.printStackTrace();
-                }
-            }
-        };
-        t.setPriority(Thread.MIN_PRIORITY);
-        t.start();*/
     }
 
     Runnable mUpdater = new Runnable(){
@@ -75,18 +58,22 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
 
     int i = 0;
     private void update() {
-        //if(i < 10){
-            nearbyConnector.getUpdate(currentSetup);
-            GUI.update(currentSetup);
-            //i++;
-        //}
-
+        nearbyConnector.getUpdate(currentSetup);
+        GUI.update(currentSetup);
     }
 
-    public void buttonConnectToServer(View view) {
+    /*public void buttonConnectToServer(View view) {
         System.out.println("Button clicked");
         nearbyConnector.stop();
-        //t.interrupt();
+    }*/
+
+    public void buttonPause(){
+        System.out.println("PAUSE Button clicked");
+        nearbyConnector.stop();
+    }
+
+    public void buttonLive(){
+        System.out.println("LIVE Button clicked");
     }
 
     private void initialize() {
@@ -98,11 +85,24 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
         //Instantiate other Modules
         //serverConnection = new ServerConnector();
         nearbyConnector = new DataIntermediary();
-        GUI = new GuiIntermediary(this);
+        GUI = new GuiIntermediary(this, buttonEvents);
     }
 
+    //ToDo make LIVE button resume the nearbyconnector
     @Override
-    public void actionPerformed(){ buttonConnectToServer(null); }
+    public void actionPerformed(){
+        for(String event : buttonEvents){
+            switch(event){
+                case "PAUSE":
+                    buttonPause();
+                    break;
+                case "LIVE":
+                    buttonLive();
+                    break;
+            }
+        }
+        buttonEvents.clear();
+    }
 
     private IServerConnector registerIServerConnector() {
         ServiceLoader<IServerConnector> loader = null;

@@ -30,9 +30,10 @@ import com.example.positioningapp.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //Note: View Animation https://developer.android.com/guide/topics/graphics/view-animation.html
-public class DataDrawerBITMAP extends View implements View.OnDragListener{
+public class DataDrawerBITMAP extends View{
 
     private Paint blackPaint;
     private Paint bluePaint;
@@ -55,7 +56,7 @@ public class DataDrawerBITMAP extends View implements View.OnDragListener{
         blackPaint.setAntiAlias(true);
         blackPaint.setColor(Color.BLACK);
         blackPaint.setStyle(Paint.Style.STROKE);
-        blackPaint.setStrokeWidth(6f);
+        blackPaint.setStrokeWidth(6f*500);
         blackPaint.setStrokeJoin(Paint.Join.ROUND);
         blackPaint.setStrokeWidth(4f);
 
@@ -90,8 +91,9 @@ public class DataDrawerBITMAP extends View implements View.OnDragListener{
     }
 
 
+    Circle firstNode;
 
-    //ToDo figure out how to fix so that dragging and update() does not interfere with invalidate(), so that the panning becomes smooth.
+    //ToDo figure out why pan is not smooth while zoom is?
     //ToDo then fix the line/path drawing
     //ToDo maybe use PointF class?
     @Override
@@ -99,31 +101,88 @@ public class DataDrawerBITMAP extends View implements View.OnDragListener{
         super.onDraw(canvas);
 
         Path path = new Path();
-
-        matrix.setTranslate(100, 100);
-        matrix.postConcat(canvasData.matrix);
-        canvas.drawBitmap(blackDot, matrix, blackPaint);
+        List<Line> lines = new ArrayList<>();
+        Coordinate previousCoordinate = null;
 
         boolean first = true;
         for(Circle node : nodesToDraw){
+            //get coordinate locations
             int actualX = node.getX();
             int actualY = node.getY();
-            int drawX = actualX-(node.getBitmap().getWidth()/2);
-            int drawY = actualY-(node.getBitmap().getHeight()/2);
+            int offsetWidth = node.getBitmap().getWidth()/2;
+            int offsetHeight = node.getBitmap().getHeight()/2;
+            int drawX = actualX-offsetWidth;
+            int drawY = actualY-offsetHeight;
 
-            matrix.setTranslate(drawX, drawY);
-            matrix.postConcat(canvasData.matrix);
-            canvas.drawBitmap(node.getBitmap(), matrix, node.getColor());
+            /*if(!first){
+                Coordinate start = lines.get(lines.size()-1).end;
+                Coordinate end = new Coordinate(drawX,drawY,0);
+                Line newLine = new Line(start,end);
+                lines.add(newLine);
+            }else{
+                first = false;
+                Line emptyLine = new Line(new Coordinate(drawX,drawY,0),new Coordinate(drawX,drawY,0));
+                lines.add(emptyLine);
+            }*/
 
+
+            //get numbers for path
+            float[] values = new float[9];
+            matrix.getValues(values);
+            float globalX = values[Matrix.MTRANS_X];
+            float globalY = values[Matrix.MTRANS_Y];
+
+            /*//Add to path
             if(first){
-                path.moveTo(drawX,drawY);
+                path.moveTo(globalX,globalY);
                 first = false;
                 continue;
-            }
-            path.lineTo(drawX,drawY);
+            }else{
+                path.lineTo(globalX,globalY);
+            }*/
 
+
+            //get first node of the setup
+            if(firstNode == null){
+                firstNode = node;
+                canvasData.matrix.setTranslate((canvas.getWidth()/2)-drawX,(canvas.getHeight()/2)-drawY);
+            }
+
+            //update matrices
+            matrix.setTranslate(drawX, drawY);
+            matrix.postConcat(canvasData.matrix);
+
+
+            if(previousCoordinate != null){
+                Line newLine = new Line(previousCoordinate, new Coordinate(drawX,drawY,0));
+                float startX = newLine.getStart().getX();
+                float startY = newLine.getStart().getY();
+                float endX = newLine.getEnd().getX();
+                float endY = newLine.getEnd().getY();
+                canvas.drawLine(startX+globalX+offsetWidth,startY+globalY+offsetHeight,endX+globalX+offsetWidth,endY+globalY+offsetHeight,blackPaint);
+
+            }
+            //Line testLine = new Line(new Coordinate(0,0,0), new Coordinate(500,500,0));
+            //lines.add(testLine);
+
+            //draw lines, draw node
+            //canvas.drawPath(path, blackPaint);
+            /*for(Line line : lines){
+                float startX = line.getStart().getX();
+                float startY = line.getStart().getY();
+                float endX = line.getEnd().getX();
+                float endY = line.getEnd().getY();
+                canvas.drawLine(startX+globalX+offsetWidth,startY+globalY+offsetHeight,endX+globalX+offsetWidth,endY+globalY+offsetHeight,blackPaint);
+                //canvas.drawLine(line.getStart().getX(),line.getStart().getY(),line.getEnd().getX(),line.getEnd().getY(),blackPaint);
+            }*/
+
+            //ToDo experiment with this; draw bitmap and lines at locations, then translate canvas afterwards?
+            // - maybe used  canvas.scale as well?
+            //canvas.translate(dx,dy);
+            canvas.drawBitmap(node.getBitmap(), matrix, node.getColor());
+            previousCoordinate = new Coordinate(drawX,drawY, 0);
         }
-        canvas.drawPath(path, blackPaint);
+
     }
 
     //@Override
@@ -141,14 +200,14 @@ public class DataDrawerBITMAP extends View implements View.OnDragListener{
 
     }
 
-    /*@Override
+    @Override
     public boolean onTouchEvent(MotionEvent event){
         panZoomWithTouch(event);
 
         invalidate();//necessary to repaint the canvas
         return true;
     }
-*/
+
     private void panZoomWithTouch(MotionEvent event){
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN://when first finger down, get first point
@@ -213,24 +272,6 @@ public class DataDrawerBITMAP extends View implements View.OnDragListener{
         point.set(x / 2, y / 2);
     }
 
-    @Override
-    public boolean onDrag(View view, DragEvent dragEvent) {
-        System.out.println("TESTTESTTEST");
-        return false;
-    }
-
-    @Override
-    public boolean onDragEvent(DragEvent event) {
-        System.out.println("ASFLIASHFLAKJSFHALKJS");
-        return super.onDragEvent(event);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        System.out.println("KEYPRESS");
-        return super.onKeyDown(keyCode, event);
-    }
-
     private class CanvasData{
         //Zoom & pan touch event
         int yOld = 0;
@@ -255,7 +296,31 @@ public class DataDrawerBITMAP extends View implements View.OnDragListener{
         int mode = NONE;
     }
 
+    private class Line{
+        private Coordinate start;
+        private Coordinate end;
 
+        public Line(Coordinate start, Coordinate end){
+            this.start = start;
+            this.end = end;
+        }
+
+        public Coordinate getStart() {
+            return start;
+        }
+
+        public void setStart(Coordinate start) {
+            this.start = start;
+        }
+
+        public Coordinate getEnd() {
+            return end;
+        }
+
+        public void setEnd(Coordinate end) {
+            this.end = end;
+        }
+    }
 
     private class Circle{
 

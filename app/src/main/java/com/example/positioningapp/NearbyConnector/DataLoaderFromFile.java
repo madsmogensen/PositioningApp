@@ -11,52 +11,39 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class DataLoader {
+public class DataLoaderFromFile {
 
     private Thread t;
-    private List<String> rawData = new ArrayList<>();
     private List<String> fullRawData = new ArrayList<>();
-    private long lastTime = System.nanoTime();
-    private int index = 0;
-    private long avgTimeStep = 225*1000000; //millis to nano
+    private boolean ready = false;
 
-    public DataLoader(){
+    public DataLoaderFromFile(){
         t = new Thread() {
             @Override
             public void run(){
                 loadFile();
-                try{
-                    while(!isInterrupted()){
-                        //If current time - last time > avg timestep, add next datapoint from fullraw to raw
-                        if(System.nanoTime() - lastTime > avgTimeStep){
-                            rawData.add(fullRawData.get(index%fullRawData.size()));
-                            lastTime = System.nanoTime();
-                            index++;
-                        }
-                        t.sleep(100);
-                    }
-                }catch(Exception e){
-                    System.out.println("Error in thread t: run() from in DataLoader");
-                    System.out.println(e);
-                }
+                ready = true;
             }
         };
         t.start();
     }
 
     public List<String> getUpdate(){
-        List<String> tempData = this.rawData;
-        rawData = new ArrayList<>(); //replace list instead of .clear to make a new object reference
-        return tempData;
-    }
+        return fullRawData;
+ }
 
     public void stop(){
         t.interrupt();
     }
 
+    public boolean isReady(){
+        return ready;
+    }
+
     private void loadFile(){
         //Load file
-        String fileLocation = "uwb.csv";
+        //String fileLocation = "uwb.csv";
+        String fileLocation = "uwb_GoCart.csv";
         BufferedReader br;
         String line = "";
         try{
@@ -65,6 +52,7 @@ public class DataLoader {
             while((line = br.readLine()) != null){
                 fullRawData.add(line);
             }
+            System.out.println("DONE READING THE FILE: " + fullRawData.size() + " lines read");
         }catch(Exception e){
             System.out.println("error in new file?");
             System.out.println(e);

@@ -1,4 +1,4 @@
-package com.example.positioningapp.ServerConnector;
+package com.example.positioningapp.ServerConnector.OLD;
 
 import com.example.positioningapp.Common.Interface.IServerConnector;
 
@@ -9,7 +9,8 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class ServerConnector implements IServerConnector {
+//USE DATAGRAMSOCKET
+public class ServerConnector /*implements IServerConnector*/ {
 
     private Thread listenerThread = null;
     private Socket socket = null;
@@ -23,9 +24,10 @@ public class ServerConnector implements IServerConnector {
         listenerThread.start();
     }
 
-    public String sendMessage(String msg) throws IOException {
+    public String sendMessage(String msg) {
         out.println(msg);
-        return in.readLine();
+        //return in.readLine();
+        return null;
     }
 
     public void stopConnection(){
@@ -49,7 +51,7 @@ public class ServerConnector implements IServerConnector {
         wantedConnection = false;
     }
 
-    @Override
+    //@Override
     public String getStatus() {
         return connectionStatus;
     }

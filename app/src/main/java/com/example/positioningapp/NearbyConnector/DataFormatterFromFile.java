@@ -4,29 +4,41 @@ import com.example.positioningapp.Common.Data.Constants;
 import com.example.positioningapp.Common.Data.Coordinate;
 import com.example.positioningapp.Common.Data.Node;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-public class DataFormatter {
+public class DataFormatterFromFile {
 
-    private DataLoader loader = new DataLoader();
+    private DataLoaderFromFile loader;
     private List<String> rawData;
-    private HashMap<String, Node> nodes = new HashMap<>();
+    private List<Node> allNodes = new ArrayList<>();
 
-    public DataFormatter(){
+    private boolean initialized = false;
 
+    public DataFormatterFromFile(){
+        loader = new DataLoaderFromFile();
     }
 
-    public HashMap<String, Node> getUpdate(){
-        nodes = new HashMap<>();
-        rawData = loader.getUpdate();
-        if(rawData.size() > 0){
+    public List<Node> getUpdate(long elapsedTime){
+        if(loader.isReady() && !initialized){ initialize(); }
+
+        List<Node> currentNodes = new ArrayList<>();
+        for(Node node : allNodes){
+            //Change this method so it keeps track of elapsed time inside each node and perhaps index itself?
+            Node copyNode = node.copyNodeToTime(elapsedTime);
+            copyNode.setPreviousIndex(copyNode.getCoordinates().size()-1);
+            currentNodes.add(copyNode);
         }
+        return currentNodes;
+    }
+
+    private void initialize(){
+        rawData = loader.getUpdate();
         formatData();
-        return nodes;
+        initialized = true;
     }
 
     public void stop(){
@@ -35,6 +47,7 @@ public class DataFormatter {
 
     private void formatData(){
         for(String rawString : rawData){
+            System.out.println("RawString: " + rawString);
             String[] rawArray = rawString.split(";");
             String id = rawArray[0];
             Coordinate newCoordinate = formatCoordinate(rawArray);
@@ -60,14 +73,16 @@ public class DataFormatter {
     }
 
 
-    //Gets the node from the hashmap nodes. returns a new node if absent in the hashmap
+    //Gets the node from the list nodes. returns a new node if absent in the list
     private Node getNode(String id){
-        if(nodes.containsKey(id)){
-            return nodes.get(id);
-        }else{
-            Node newNode = new Node();
-            nodes.put(id, newNode);
-            return newNode;
+        for(Node node : allNodes){
+            if(node.getId().equals(id)){
+                return node;
+            }
         }
+        Node newNode = new Node();
+        newNode.setId(id);
+        allNodes.add(newNode);
+        return newNode;
     }
 }

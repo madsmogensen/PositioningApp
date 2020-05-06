@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 
 import com.example.positioningapp.Common.Data.Constants;
 import com.example.positioningapp.Common.Data.Setup;
@@ -13,9 +12,11 @@ import com.example.positioningapp.Common.Interface.IGUI;
 import com.example.positioningapp.Common.Interface.INearbyConnector;
 import com.example.positioningapp.Common.Interface.IServerConnector;
 import com.example.positioningapp.GUI.GuiIntermediary;
-import com.example.positioningapp.NearbyConnector.DataIntermediary;
+import com.example.positioningapp.NearbyConnector.NearbyDataIntermediary;
+import com.example.positioningapp.ServerConnector.ServerDataIntermediary;
 import com.example.positioningapp.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -28,15 +29,18 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
     Setup currentSetup = new Setup();
     Handler mHandler;
     int mInterval = 100;
-
+    State state = State.LIVE;
     List<String> buttonEvents = new ArrayList<>();
+
+    long lastTime = System.currentTimeMillis();
+    long elapsedTime = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initialize();
-
         mHandler = new Handler();
         startRepeatingTask();
     }
@@ -56,24 +60,67 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
         mUpdater.run();
     }
 
-    int i = 0;
+    //ToDo fix timings so that the getNearby uses actual time instead of fixed
+    // and so that time elapsed can be used for play, fast forward, rewind and maybe even slow motion
     private void update() {
-        nearbyConnector.getUpdate(currentSetup);
+        elapsedTime = System.currentTimeMillis()-lastTime;
+        lastTime = System.currentTimeMillis();
+        switch(state){
+            case LIVE:
+                currentSetup.updateSetup();
+                break;
+            case REWIND:
+                currentSetup.rewindSetup();
+                break;
+            case FASTFORWARD:
+                currentSetup.fastForwardSetup();
+                break;
+            case PLAY:
+                currentSetup.playSetup(elapsedTime);
+                break;
+        }
+        //nearbyConnector.getUpdate(currentSetup, elapsedTime);
         GUI.update(currentSetup);
     }
 
-    /*public void buttonConnectToServer(View view) {
-        System.out.println("Button clicked");
-        nearbyConnector.stop();
-    }*/
-
     public void buttonPause(){
         System.out.println("PAUSE Button clicked");
-        nearbyConnector.stop();
+        if(state == State.LIVE){
+            currentSetup.pauseSetup();
+        }
+        state = State.PAUSE;
     }
 
     public void buttonLive(){
         System.out.println("LIVE Button clicked");
+        state = State.LIVE;
+    }
+
+    public void buttonRewind(){
+        System.out.println("REWIND Button clicked");
+        state = State.REWIND;
+    }
+
+    public void buttonPlay(){
+        System.out.println("PLAY Button clicked");
+        state = State.PLAY;
+    }
+
+    public void buttonFastForward(){
+        System.out.println("FASTFORWARD Button clicked");
+        state = State.FASTFORWARD;
+    }
+
+    public void buttonBackOnce(){
+        System.out.println("BACK Button clicked");
+        currentSetup.backOnce();
+        state = State.PAUSE;
+    }
+
+    public void buttonForwardOnce(){
+        System.out.println("FORWARD Button clicked");
+        currentSetup.forwardOnce();
+        state = State.PAUSE;
     }
 
     private void initialize() {
@@ -83,21 +130,37 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
         Constants.mainLayout = findViewById(R.id.MainLayout);
 
         //Instantiate other Modules
-        //serverConnection = new ServerConnector();
-        nearbyConnector = new DataIntermediary();
+        serverConnection = new ServerDataIntermediary();
+        serverConnection.sendMessage("CLIENT;REQUEST:From File");
+        //nearbyConnector = new NearbyDataIntermediary();
         GUI = new GuiIntermediary(this, buttonEvents);
+        lastTime = System.currentTimeMillis();
     }
 
-    //ToDo make LIVE button resume the nearbyconnector
     @Override
     public void actionPerformed(){
         for(String event : buttonEvents){
-            switch(event){
+            switch(event.replaceAll(" ", "")){
+                case "REWIND":
+                    buttonRewind();
+                    break;
                 case "PAUSE":
                     buttonPause();
                     break;
                 case "LIVE":
                     buttonLive();
+                    break;
+                case "PLAY":
+                    buttonPlay();
+                    break;
+                case "FASTFORWARD":
+                    buttonFastForward();
+                    break;
+                case "BACKONCE":
+                    buttonBackOnce();
+                    break;
+                case "FORWARDONCE":
+                    buttonForwardOnce();
                     break;
             }
         }

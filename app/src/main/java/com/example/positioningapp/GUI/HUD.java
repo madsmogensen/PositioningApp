@@ -60,43 +60,34 @@ public class HUD extends View {
     }
 
     private void addBottomPanel(){
-
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-
         LinearLayout bottomPanel = new LinearLayout(context);
-        bottomPanel.setOrientation(LinearLayout.HORIZONTAL);
+        bottomPanel.setOrientation(LinearLayout.VERTICAL);
         bottomPanel.setId(View.generateViewId());
 
-        Button liveButton = new Button(context);
-        liveButton.setText("LIVE");
-        liveButton.setLayoutParams(lp);
-        liveButton.setId(View.generateViewId());
-        liveButton.setOnClickListener(new OnClickListener(){
-            @Override
-            public void onClick(View view){
-                for(ActionListener listener : listeners){
-                    buttonEvents.add("LIVE");
-                    listener.actionPerformed();
-                }
-            }
-        });
+        LinearLayout bottomPanelTop = new LinearLayout(context);
+        bottomPanelTop.setOrientation(LinearLayout.HORIZONTAL);
+        bottomPanelTop.setGravity(Gravity.RIGHT);
+        bottomPanelTop.setId(View.generateViewId());
+        bottomPanel.addView(bottomPanelTop);
 
-        Button pauseButton = new Button(context);
-        pauseButton.setText("PAUSE");
-        pauseButton.setLayoutParams(lp);
-        pauseButton.setId(View.generateViewId());
-        pauseButton.setOnClickListener(new OnClickListener(){
-            @Override
-            public void onClick(View view){
-                for(ActionListener listener : listeners){
-                    buttonEvents.add("PAUSE");
-                    listener.actionPerformed();
-                }
-            }
-        });
+        LinearLayout bottomPanelBottom = new LinearLayout(context);
+        bottomPanelBottom.setOrientation(LinearLayout.HORIZONTAL);
+        bottomPanelBottom.setId(View.generateViewId());
+        bottomPanel.addView(bottomPanelBottom);
 
-        bottomPanel.addView(pauseButton);
-        bottomPanel.addView(liveButton);
+
+
+        bottomPanelTop.addView(newButton("<-", "BACKONCE"));
+        bottomPanelTop.addView(newButton("->", "FORWARDONCE"));
+        Button placeholderButton = new Button(context);
+        placeholderButton.setAlpha(0);
+        bottomPanelTop.addView(placeholderButton);
+        bottomPanelTop.addView(newButton("LIVE", "LIVE"));
+        bottomPanelBottom.addView(newButton("REWIND", "REWIND"));
+        bottomPanelBottom.addView(newButton("FAST FORWARD", "FASTFORWARD"));
+        bottomPanelBottom.addView(newButton("PAUSE", "PAUSE"));
+        bottomPanelBottom.addView(newButton("PLAY", "PLAY"));
+
 
         cLayout.addView(bottomPanel);
 
@@ -105,6 +96,26 @@ public class HUD extends View {
         constraints.connect(bottomPanel.getId(), ConstraintSet.BOTTOM, cLayout.getId(), ConstraintSet.BOTTOM, 8);
         cLayout.setConstraintSet(constraints);
     }
+
+    private Button newButton(final String text, final String event){
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        Button newButton = new Button(context);
+        newButton.setText(text);
+        newButton.setLayoutParams(lp);
+        newButton.setId(View.generateViewId());
+        newButton.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View view){
+                for(ActionListener listener : listeners){
+                    buttonEvents.add(event);
+                    listener.actionPerformed();
+                }
+            }
+        });
+        return newButton;
+    }
+
+
 
     public void addActionListener(ActionListener newListener){
         listeners.add(newListener);

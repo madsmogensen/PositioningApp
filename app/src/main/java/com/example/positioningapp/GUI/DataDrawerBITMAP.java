@@ -39,13 +39,15 @@ public class DataDrawerBITMAP extends View{
     private Paint bluePaint;
     private List<Circle> nodesToDraw = new ArrayList<>();
 
-    private Matrix matrix = new Matrix();
+    Matrix nodeMatrix = new Matrix();
 
     private CanvasData canvasData;
 
     Resources res;
     Bitmap blackDot;
     Bitmap blueDot;
+
+    Bitmap background;
 
     public DataDrawerBITMAP(Context context, ConstraintLayout layout) {
         super(context);
@@ -69,24 +71,33 @@ public class DataDrawerBITMAP extends View{
         bluePaint.setStrokeWidth(4f);
 
         res = Constants.context.getResources();
-        blueDot = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.black_dot),30,30,false);
+        blueDot = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.blue_dot),30,30,false);
         blackDot = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.black_dot),30,30,false);
+
+        background = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res,R.drawable.background_gokartcenter), 1708,871,false);
 
         layout.addView(this);
     }
 
     public void update(Setup setup){
         HashMap<String, Node> nodes = setup.getNodes();
+        nodesToDraw = new ArrayList<>();
         for(Node node : nodes.values()){
-            Circle newCircle = new Circle();
-            List<Coordinate> coordinates = node.getCoordinates();
-            Coordinate currentCoordinate = coordinates.get(coordinates.size()-1);
+            for(int i = 0; i < node.getIndex(); i++){
+                Coordinate currentCoordinate = node.getCoordinate(i);
+                Circle newCircle = new Circle();
+                newCircle.setX(currentCoordinate.getX());
+                newCircle.setY(currentCoordinate.getY());
+                newCircle.setBitmap(blackDot);
 
-            newCircle.setX(currentCoordinate.getX());
-            newCircle.setY(currentCoordinate.getY());
-            newCircle.setBitmap(blackDot);
-
-            nodesToDraw.add(newCircle);
+                nodesToDraw.add(newCircle);
+            }
+        }/*
+        if(nodesToDraw.size() > 100){
+            nodesToDraw = nodesToDraw.subList(nodesToDraw.size()-101,nodesToDraw.size()-1);
+        }*/
+        if(nodesToDraw.size() > 0){
+            nodesToDraw.get(nodesToDraw.size()-1).setBitmap(blueDot);
         }
         invalidate();
     }
@@ -101,12 +112,21 @@ public class DataDrawerBITMAP extends View{
 
         Coordinate previousCoordinate = null;
 
+        Matrix backGroundOffset = new Matrix();
+        backGroundOffset.postScale(4.83f,4.82f);
+        backGroundOffset.postTranslate(-3045,-1980);
+        backGroundOffset.postConcat(canvasData.matrix);
+        canvas.drawBitmap(background,backGroundOffset,blackPaint);
+
+
         for(Circle node : nodesToDraw){
             //get coordinate locations
             int actualX = node.getX();
             int actualY = node.getY();
             //invert y
             actualY = canvas.getHeight()-actualY;
+            float stretchFix = 0.5f;
+            actualY = Math.round(actualY * stretchFix);
             int offsetWidth = node.getBitmap().getWidth()/2;
             int offsetHeight = node.getBitmap().getHeight()/2;
             int bitmapCenterX = actualX-offsetWidth;
@@ -119,12 +139,12 @@ public class DataDrawerBITMAP extends View{
             }
 
             //update matrices
-            matrix.setTranslate(actualX, actualY);
-            matrix.postConcat(canvasData.matrix);
+            nodeMatrix.setTranslate(actualX,actualY);
+            nodeMatrix.postConcat(canvasData.matrix);
 
             //get numbers for path
             float[] values = new float[9];
-            matrix.getValues(values);
+            nodeMatrix.getValues(values);
             float globalX = values[Matrix.MTRANS_X];
             float globalY = values[Matrix.MTRANS_Y];
 
@@ -134,8 +154,10 @@ public class DataDrawerBITMAP extends View{
             }
 
             canvas.drawBitmap(node.getBitmap(), globalX-offsetWidth, globalY-offsetHeight, node.getColor());
+
             previousCoordinate = new Coordinate(Math.round(globalX),Math.round(globalY), 0);
         }
+
 
     }
 

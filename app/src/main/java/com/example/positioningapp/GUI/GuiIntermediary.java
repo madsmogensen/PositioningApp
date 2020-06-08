@@ -9,19 +9,14 @@ import java.util.List;
 
 public class GuiIntermediary implements IGUI {
 
-    private HUDBottomPanel HUDBottomPanel;
-    private HUDMenu HUDMenu;
-    private DataDrawerBITMAP dataBitmap;
+    private HUD HUD;
+    private DataDrawer dataBitmap;
 
     public GuiIntermediary(ActionListener listener, List<String> buttonEvents){
         //Instantiate DataDrawer
-        dataBitmap = new DataDrawerBITMAP(Constants.context, Constants.mainLayout);
+        dataBitmap = new DataDrawer(Constants.context, Constants.mainLayout);
         //Instantiate HUD
-        //HUD = new HUD(Constants.context, Constants.mainLayout, buttonEvents);
-        HUDBottomPanel = new HUDBottomPanel(Constants.context, Constants.mainLayout, buttonEvents);
-        HUDBottomPanel.addActionListener(listener);
-        HUDMenu = new HUDMenu(Constants.context, Constants.mainLayout,buttonEvents);
-        HUDMenu.addActionListener(listener);
+        HUD = new HUD(buttonEvents, listener);
     }
 
     @Override

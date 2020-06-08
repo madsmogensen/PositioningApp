@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
         mUpdater.run();
     }
 
-    //ToDo fix timings so that the getNearby uses actual time instead of fixed
-    // and so that time elapsed can be used for play, fast forward, rewind and maybe even slow motion
     private void update() {
         elapsedTime = System.currentTimeMillis()-lastTime;
         lastTime = System.currentTimeMillis();

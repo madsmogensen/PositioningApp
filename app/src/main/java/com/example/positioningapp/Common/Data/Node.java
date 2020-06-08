@@ -3,17 +3,13 @@ package com.example.positioningapp.Common.Data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node {
+public class Node extends Unit{
 
     private List<Coordinate> coordinates = new ArrayList<>();
     private int currentIndex = 0;
     private long elapsedTime = 0;
     private long lastTime = 0;
-    private String id;
     private int previousIndex = 0;
-
-    public Node(){
-    }
 
     public Node(String id){
         this.id = id;
@@ -35,7 +31,8 @@ public class Node {
         this.coordinates.addAll(node.getCoordinates());
     }
 
-    public void updateNode(){
+    @Override
+    public void update(){
         if(coordinates.isEmpty()){
             currentIndex = 0;
         }else{

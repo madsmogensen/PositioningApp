@@ -1,4 +1,4 @@
-package com.example.positioningapp.GUI;
+package com.example.positioningapp.GUI.Decorations;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -14,13 +14,15 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import com.example.positioningapp.Common.Data.Constants;
 import com.example.positioningapp.Common.Interface.ActionListener;
+import com.example.positioningapp.GUI.HUDDecorator;
 import com.example.positioningapp.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HUDBottomPanel extends View {
+public class HUDBottomPanel extends HUDDecorator {
 
     private Context context;
     private ConstraintLayout mainLayout;
@@ -30,10 +32,11 @@ public class HUDBottomPanel extends View {
     private List<String> buttonEvents;
     private Resources res;
 
-    public HUDBottomPanel(Context context, ConstraintLayout mainLayout, List<String> buttonEvents) {
-        super(context);
-        this.context = context;
-        this.mainLayout = mainLayout;
+    public HUDBottomPanel(List<String> buttonEvents, ActionListener listener) {
+        super(buttonEvents, listener);
+        addActionListener(listener);
+        this.context = super.getContext();
+        this.mainLayout = super.getMainLayout();
         this.buttonEvents = buttonEvents;
         res = context.getResources();
 
@@ -136,7 +139,7 @@ public class HUDBottomPanel extends View {
         return newButton;
     }
 
-    public void addActionListener(ActionListener newListener){
+    private void addActionListener(ActionListener newListener){
         listeners.add(newListener);
     }
 }

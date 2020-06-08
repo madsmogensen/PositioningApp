@@ -1,18 +1,20 @@
 package com.example.positioningapp.Common.Data;
 
-import java.util.UUID;
 
-public class Anchor {
-    int x;
-    int y;
-    int z;
-    String name;
-    UUID ID = UUID.randomUUID();
+public class Anchor extends Unit{
+    private Coordinate coordinate;
 
-    public Anchor(int x, int y, int z, String name){
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.name = name;
+
+    public Anchor(String id){
+        this.id = id;
+    }
+
+    public void addCoordinate(Coordinate coordinate){
+        this.coordinate = coordinate;
+    }
+
+    @Override
+    public void update() {
+
     }
 }

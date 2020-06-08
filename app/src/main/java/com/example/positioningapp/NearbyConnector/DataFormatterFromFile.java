@@ -3,6 +3,7 @@ package com.example.positioningapp.NearbyConnector;
 import com.example.positioningapp.Common.Data.Constants;
 import com.example.positioningapp.Common.Data.Coordinate;
 import com.example.positioningapp.Common.Data.Node;
+import com.example.positioningapp.Common.Data.Unit;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -14,7 +15,7 @@ public class DataFormatterFromFile {
 
     private DataLoaderFromFile loader;
     private List<String> rawData;
-    private List<Node> allNodes = new ArrayList<>();
+    private List<Unit> allNodes = new ArrayList<>();
 
     private boolean initialized = false;
 
@@ -26,8 +27,9 @@ public class DataFormatterFromFile {
         if(loader.isReady() && !initialized){ initialize(); }
 
         List<Node> currentNodes = new ArrayList<>();
-        for(Node node : allNodes){
+        for(Unit unit : allNodes){
             //Change this method so it keeps track of elapsed time inside each node and perhaps index itself?
+            Node node = unit.asNode();
             Node copyNode = node.copyNodeToTime(elapsedTime);
             copyNode.setPreviousIndex(copyNode.getCoordinates().size()-1);
             currentNodes.add(copyNode);
@@ -51,7 +53,7 @@ public class DataFormatterFromFile {
             String[] rawArray = rawString.split(";");
             String id = rawArray[0];
             Coordinate newCoordinate = formatCoordinate(rawArray);
-            Node node = getNode(id);
+            Unit node = getNode(id);
             node.addCoordinate(newCoordinate);
         }
     }
@@ -74,14 +76,14 @@ public class DataFormatterFromFile {
 
 
     //Gets the node from the list nodes. returns a new node if absent in the list
-    private Node getNode(String id){
-        for(Node node : allNodes){
-            if(node.getId().equals(id)){
-                return node;
+    private Unit getNode(String id){
+        for(Unit unit : allNodes){
+            if(unit.getId().equals(id)){
+                return unit;
             }
         }
-        Node newNode = new Node();
-        newNode.setId(id);
+
+        Node newNode = new Node(id);
         allNodes.add(newNode);
         return newNode;
     }

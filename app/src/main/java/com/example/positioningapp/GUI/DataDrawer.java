@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 //Note: View Animation https://developer.android.com/guide/topics/graphics/view-animation.html
-public class DataDrawerBITMAP extends View{
+public class DataDrawer extends View{
 
     private Paint blackPaint;
     private Paint bluePaint;
@@ -49,7 +49,7 @@ public class DataDrawerBITMAP extends View{
 
     Bitmap background;
 
-    public DataDrawerBITMAP(Context context, ConstraintLayout layout) {
+    public DataDrawer(Context context, ConstraintLayout layout) {
         super(context);
 
         canvasData = new CanvasData();

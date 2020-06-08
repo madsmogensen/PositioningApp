@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
                 currentSetup.playSetup(elapsedTime);
                 break;
         }
-        //nearbyConnector.getUpdate(currentSetup, elapsedTime);
+        nearbyConnector.getUpdate(currentSetup, elapsedTime);
         GUI.update(currentSetup);
     }
 
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
         //Instantiate other Modules
         serverConnection = new ServerDataIntermediary();
         serverConnection.sendMessage("CLIENT;REQUEST:From File");
-        //nearbyConnector = new NearbyDataIntermediary();
+        nearbyConnector = new NearbyDataIntermediary();
         GUI = new GuiIntermediary(this, buttonEvents);
         lastTime = System.currentTimeMillis();
     }

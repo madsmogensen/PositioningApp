@@ -62,27 +62,27 @@ public class HUDBottomPanel extends View {
         List<Button> buttonsInPause = new ArrayList<>();
         List<Button> allButtonsInMenu = new ArrayList<>();
 
-        Button backOnce = newButton("<-", "BACKONCE", null, R.drawable.icon_play);
+        Button backOnce = newButton("<-", "BACKONCE", null, R.drawable.icon_oneback);
         buttonsInPause.add(backOnce);
         allButtonsInMenu.add(backOnce);
 
-        Button forwardOnce = newButton("->", "FORWARDONCE", null, R.drawable.icon_play);
+        Button forwardOnce = newButton("->", "FORWARDONCE", null, R.drawable.icon_oneforward);
         buttonsInPause.add(forwardOnce);
         allButtonsInMenu.add(forwardOnce);
 
-        Button pause = newButton("Pause", "PAUSE", buttonsInPause, R.drawable.icon_play);
+        Button pause = newButton("Pause", "PAUSE", buttonsInPause, R.drawable.icon_pause);
         allButtonsInMenu.add(pause);
 
         Button play = newButton("Play", "PLAY", null, R.drawable.icon_play);
         allButtonsInMenu.add(play);
 
-        Button live = newButton("Live", "LIVE", null, R.drawable.icon_play);
+        Button live = newButton("Live", "LIVE", null, R.drawable.icon_live);
         allButtonsInMenu.add(live);
 
-        Button rewind = newButton("Rewind", "REWIND", null, R.drawable.icon_play);
+        Button rewind = newButton("Rewind", "REWIND", null, R.drawable.icon_rewind);
         allButtonsInMenu.add(rewind);
 
-        Button fastForward = newButton("Fast Forward", "FASTFORWARD", null, R.drawable.icon_play);
+        Button fastForward = newButton("Fast Forward", "FASTFORWARD", null, R.drawable.icon_fastforward);
         allButtonsInMenu.add(fastForward);
 
         Button menuButton = newButton("menu","", allButtonsInMenu, R.drawable.menu_icon);
@@ -93,8 +93,8 @@ public class HUDBottomPanel extends View {
         bottomPanel.addView(live);
         bottomPanel.addView(play);
         bottomPanel.addView(pause);
-        bottomPanel.addView(forwardOnce);
         bottomPanel.addView(backOnce);
+        bottomPanel.addView(forwardOnce);
 
         cLayout.addView(bottomPanel);
 

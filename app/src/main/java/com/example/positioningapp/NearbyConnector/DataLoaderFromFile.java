@@ -1,14 +1,10 @@
 package com.example.positioningapp.NearbyConnector;
 
 import com.example.positioningapp.Common.Data.Constants;
-import com.example.positioningapp.Common.Data.Coordinate;
-import com.example.positioningapp.Common.Data.Setup;
-import com.example.positioningapp.Common.Data.TrackedNode;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DataLoaderFromFile {
@@ -43,7 +39,8 @@ public class DataLoaderFromFile {
     private void loadFile(){
         //Load file
         //String fileLocation = "uwb.csv";
-        String fileLocation = "uwb_GoCart.csv";
+        //String fileLocation = "uwb_GoCart.csv";
+        String fileLocation = "uwb_ActualDataGocart.csv";
         BufferedReader br;
         String line = "";
         try{

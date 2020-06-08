@@ -9,10 +9,8 @@ import java.util.List;
 
 public class GuiIntermediary implements IGUI {
 
-    //private HUD HUD;
     private HUDBottomPanel HUDBottomPanel;
     private HUDMenu HUDMenu;
-
     private DataDrawerBITMAP dataBitmap;
 
     public GuiIntermediary(ActionListener listener, List<String> buttonEvents){

@@ -1,4 +1,4 @@
-package com.example.positioningapp.GUI;
+package com.example.positioningapp.GUI.OLD;
 
 import android.content.Context;
 import android.content.res.Resources;

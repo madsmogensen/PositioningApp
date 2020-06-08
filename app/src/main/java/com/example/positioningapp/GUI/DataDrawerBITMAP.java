@@ -113,8 +113,8 @@ public class DataDrawerBITMAP extends View{
         Coordinate previousCoordinate = null;
 
         Matrix backGroundOffset = new Matrix();
-        backGroundOffset.postScale(4.83f,4.82f);
-        backGroundOffset.postTranslate(-3045,-1980);
+        backGroundOffset.postScale(59f,59f);
+        backGroundOffset.postTranslate(-37150,-36400);
         backGroundOffset.postConcat(canvasData.matrix);
         canvas.drawBitmap(background,backGroundOffset,blackPaint);
 
@@ -125,8 +125,8 @@ public class DataDrawerBITMAP extends View{
             int actualY = node.getY();
             //invert y
             actualY = canvas.getHeight()-actualY;
-            float stretchFix = 0.5f;
-            actualY = Math.round(actualY * stretchFix);
+            //float stretchFix = 0.5f;
+            //actualY = Math.round(actualY * stretchFix);
             int offsetWidth = node.getBitmap().getWidth()/2;
             int offsetHeight = node.getBitmap().getHeight()/2;
             int bitmapCenterX = actualX-offsetWidth;

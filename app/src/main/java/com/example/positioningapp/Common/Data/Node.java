@@ -123,7 +123,11 @@ public class Node {
         elapsedTime += timeElapsed;
         while(true){
             //first run or looped around
-            if(currentIndex == 0){ newNode.addCoordinate(coordinates.get(0));currentIndex++;lastTime = coordinates.get(0).getDateTime().getTime();}
+            if(currentIndex == 0){
+                newNode.addCoordinate(coordinates.get(0));
+                currentIndex++;
+                lastTime = coordinates.get(0).getDateTime().getTime();
+            }
 
             Coordinate currentCoord = coordinates.get(currentIndex);
             //check if enough time has elapsed to get another coordinate

@@ -7,7 +7,7 @@ import java.net.InetAddress;
 public class UDPOutgoing{
 
     int port;
-    String serverIp = "192.168.1.22";
+    String serverIP = "192.168.1.22";
     String msg = "";
     Thread t;
 
@@ -24,7 +24,7 @@ public class UDPOutgoing{
     public void send() {
         try{
             DatagramSocket udpSocket = new DatagramSocket(port);
-            InetAddress serverAddress = InetAddress.getByName(serverIp);
+            InetAddress serverAddress = InetAddress.getByName(serverIP);
             byte[] buffer = msg.getBytes();
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length, serverAddress,port);
             udpSocket.send(packet);

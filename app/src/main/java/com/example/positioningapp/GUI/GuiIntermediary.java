@@ -16,7 +16,7 @@ public class GuiIntermediary implements IGUI {
         //Instantiate DataDrawer
         dataBitmap = new DataDrawer(Constants.context, Constants.mainLayout);
         //Instantiate HUD
-        HUD = new HUD(buttonEvents, listener);
+        HUD = new HUD(listener, buttonEvents);
     }
 
     @Override

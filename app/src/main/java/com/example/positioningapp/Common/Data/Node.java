@@ -15,6 +15,7 @@ public class Node extends Unit{
         this.id = id;
     }
 
+    @Override
     public void addCoordinate(Coordinate coordinate){
         coordinates.add(coordinate);
     }

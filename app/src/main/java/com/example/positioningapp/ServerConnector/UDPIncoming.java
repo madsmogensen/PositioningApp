@@ -9,9 +9,9 @@ import java.util.List;
 
 public class UDPIncoming {
 
-    Thread t;
-    List<String> tempData = new ArrayList<>();
-    int port;
+    private Thread t;
+    private List<String> tempData = new ArrayList<>();
+    private int port;
 
     public UDPIncoming(int port){
         this.port = port;
@@ -39,7 +39,6 @@ public class UDPIncoming {
             udpSocket.receive(packet); //the blocking line!
             String text = new String(msgBuffer, 0, packet.getLength());
             tempData.add(text);
-            System.out.println("RETRIEVED SOMETHING!: " + text);
         }
     }
 

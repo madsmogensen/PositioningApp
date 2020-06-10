@@ -6,10 +6,6 @@ public class Setup {
 
     private HashMap<String, Unit> units = new HashMap<>();
 
-    public Setup(){
-
-    }
-
     public HashMap<String, Node> getNodes(){
         HashMap<String, Node> nodes = new HashMap<>();
         for(Unit unit : units.values()){

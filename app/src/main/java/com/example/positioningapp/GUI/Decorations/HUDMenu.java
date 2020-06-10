@@ -30,7 +30,7 @@ public class HUDMenu extends HUDDecorator {
     private List<String> buttonEvents;
     private Resources res;
 
-    public HUDMenu(List<String> buttonEvents, ActionListener listener) {
+    public HUDMenu(ActionListener listener, List<String> buttonEvents) {
         super(buttonEvents, listener);
         this.context = super.getContext();
         this.mainLayout = super.getMainLayout();

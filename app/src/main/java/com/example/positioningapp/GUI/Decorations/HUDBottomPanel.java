@@ -32,7 +32,7 @@ public class HUDBottomPanel extends HUDDecorator {
     private List<String> buttonEvents;
     private Resources res;
 
-    public HUDBottomPanel(List<String> buttonEvents, ActionListener listener) {
+    public HUDBottomPanel(ActionListener listener, List<String> buttonEvents) {
         super(buttonEvents, listener);
         addActionListener(listener);
         this.context = super.getContext();

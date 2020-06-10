@@ -13,20 +13,15 @@ import java.util.List;
 
 public class DataFormatterFromFile {
 
-    private DataLoaderFromFile loader;
+    private DataLoaderFromFile loader = new DataLoaderFromFile();
     private List<String> rawData;
     private List<Unit> allNodes = new ArrayList<>();
-
     private boolean initialized = false;
 
-    public DataFormatterFromFile(){
-        loader = new DataLoaderFromFile();
-    }
-
-    public List<Node> getUpdate(long elapsedTime){
+    public List<Unit> getUpdate(long elapsedTime){
         if(loader.isReady() && !initialized){ initialize(); }
 
-        List<Node> currentNodes = new ArrayList<>();
+        List<Unit> currentNodes = new ArrayList<>();
         for(Unit unit : allNodes){
             //Change this method so it keeps track of elapsed time inside each node and perhaps index itself?
             Node node = unit.asNode();

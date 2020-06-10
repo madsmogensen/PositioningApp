@@ -6,9 +6,9 @@ import java.util.List;
 
 public class DataFormatter {
 
-    UDPIncoming incoming;
-    UDPOutgoing outgoing;
-    int port = 11000;
+    private UDPIncoming incoming;
+    private UDPOutgoing outgoing;
+    private int port = 11000;
 
     public DataFormatter(){
         incoming = new UDPIncoming(port);

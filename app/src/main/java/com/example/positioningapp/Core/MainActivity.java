@@ -23,23 +23,24 @@ import java.util.ServiceLoader;
 
 public class MainActivity extends AppCompatActivity implements ActionListener {
 
-    IServerConnector serverConnection;
-    INearbyConnector nearbyConnector;
-    IGUI GUI;
-    Setup currentSetup = new Setup();
-    Handler mHandler;
-    int mInterval = 100;
-    State state = State.LIVE;
-    List<String> buttonEvents = new ArrayList<>();
+    private IServerConnector serverConnection;
+    private INearbyConnector nearbyConnector;
+    private IGUI GUI;
+    private Setup currentSetup = new Setup();
+    private Handler mHandler;
+    private int mInterval = 100;
+    private State state = State.LIVE;
+    private List<String> buttonEvents = new ArrayList<>();
 
-    long lastTime = System.currentTimeMillis();
-    long elapsedTime = 0;
+    private long lastTime = System.currentTimeMillis();
+    private long elapsedTime = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initialize();
         mHandler = new Handler();
         startRepeatingTask();
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
         }
     };
 
-    void startRepeatingTask(){
+    private void startRepeatingTask(){
         mUpdater.run();
     }
 
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
         GUI.update(currentSetup);
     }
 
-    public void buttonPause(){
+    private void buttonPause(){
         System.out.println("PAUSE Button clicked");
         if(state == State.LIVE){
             currentSetup.pauseSetup();

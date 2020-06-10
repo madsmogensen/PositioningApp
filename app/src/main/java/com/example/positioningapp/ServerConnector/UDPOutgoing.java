@@ -6,10 +6,10 @@ import java.net.InetAddress;
 
 public class UDPOutgoing{
 
-    int port;
-    String serverIP = "192.168.1.22";
-    String msg = "";
-    Thread t;
+    private int port;
+    private String serverIP = "192.168.1.22";
+    private String msg = "";
+    private Thread t;
 
     public UDPOutgoing(int port){
         this.port = port;
@@ -21,7 +21,7 @@ public class UDPOutgoing{
         };
     }
 
-    public void send() {
+    private void send() {
         try{
             DatagramSocket udpSocket = new DatagramSocket(port);
             InetAddress serverAddress = InetAddress.getByName(serverIP);

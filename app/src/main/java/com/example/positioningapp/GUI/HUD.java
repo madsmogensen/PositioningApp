@@ -11,8 +11,8 @@ public class HUD{
 
     private List<HUDDecorator> HUDElements = new ArrayList<>();
 
-    public HUD(List<String> buttonEvents, ActionListener listener) {
-        HUDElements.add(new HUDMenu(buttonEvents, listener));
-        HUDElements.add(new HUDBottomPanel(buttonEvents, listener));
+    public HUD(ActionListener listener, List<String> buttonEvents) {
+        HUDElements.add(new HUDMenu(listener, buttonEvents));
+        HUDElements.add(new HUDBottomPanel(listener, buttonEvents));
     }
 }

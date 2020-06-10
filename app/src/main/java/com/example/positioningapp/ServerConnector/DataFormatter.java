@@ -27,5 +27,6 @@ public class DataFormatter {
     public void update(Setup setup){
         //Update the setup with the new data from incoming
         List<String> temp = incoming.getTempData();
+        //add temp data to setup
     }
 }

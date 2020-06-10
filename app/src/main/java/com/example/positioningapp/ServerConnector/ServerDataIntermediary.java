@@ -7,11 +7,7 @@ import java.io.IOException;
 
 public class ServerDataIntermediary implements IServerConnector {
 
-    DataFormatter formatter;
-
-    public ServerDataIntermediary(){
-        formatter = new DataFormatter();
-    }
+    private DataFormatter formatter = new DataFormatter();;
 
     @Override
     public String sendMessage(String msg) {

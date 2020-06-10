@@ -39,15 +39,17 @@ public class DataDrawer extends View{
     private Paint bluePaint;
     private List<Circle> nodesToDraw = new ArrayList<>();
 
-    Matrix nodeMatrix = new Matrix();
+    private Matrix nodeMatrix = new Matrix();
 
     private CanvasData canvasData;
 
-    Resources res;
-    Bitmap blackDot;
-    Bitmap blueDot;
+    private Resources res;
+    private Bitmap blackDot;
+    private Bitmap blueDot;
 
-    Bitmap background;
+    private Bitmap background;
+
+    private Circle firstNode;
 
     public DataDrawer(Context context, ConstraintLayout layout) {
         super(context);
@@ -101,9 +103,6 @@ public class DataDrawer extends View{
         }
         invalidate();
     }
-
-
-    Circle firstNode;
 
     //ToDo figure out why pan is not smooth while zoom is?
     @Override
@@ -234,53 +233,20 @@ public class DataDrawer extends View{
     }
 
     private class CanvasData{
-        //Zoom & pan touch event
-        int yOld = 0;
-        int yNew = 0;
-        int zoomMode = 0;
-        float pinchDistanceOld = 0;
-        float pinchDistanceNew = 0;
-        int zoomControllerScale = 1; //new and old pinch distance to determine zoom scale
         //These matrices will be used to move and zoom image
-        Matrix matrix = new Matrix();
-        Matrix savedMatrix = new Matrix();
+        private Matrix matrix = new Matrix();
+        private Matrix savedMatrix = new Matrix();
 
         //Remember some things for zooming
-        PointF start = new PointF();
-        PointF mid = new PointF();
-        float oldDistance = 1f;
+        private PointF start = new PointF();
+        private PointF mid = new PointF();
+        private float oldDistance = 1f;
 
         //We can be in one of these 3 states
-        static final int NONE = 0;
-        static final int PAN = 1;
-        static final int ZOOM = 2;
-        int mode = NONE;
-    }
-
-    private class Line{
-        private Coordinate start;
-        private Coordinate end;
-
-        public Line(Coordinate start, Coordinate end){
-            this.start = start;
-            this.end = end;
-        }
-
-        public Coordinate getStart() {
-            return start;
-        }
-
-        public void setStart(Coordinate start) {
-            this.start = start;
-        }
-
-        public Coordinate getEnd() {
-            return end;
-        }
-
-        public void setEnd(Coordinate end) {
-            this.end = end;
-        }
+        private static final int NONE = 0;
+        private static final int PAN = 1;
+        private static final int ZOOM = 2;
+        private int mode = NONE;
     }
 
     private class Circle{
@@ -289,8 +255,6 @@ public class DataDrawer extends View{
         private int y;
         private Paint color = bluePaint;
         private Bitmap bitmap;
-
-        public Circle(){ }
 
         public Bitmap getBitmap() { return bitmap; }
 
@@ -312,10 +276,6 @@ public class DataDrawer extends View{
 
         public Paint getColor() {
             return color;
-        }
-
-        public void setColor(Paint color) {
-            this.color = color;
         }
     }
 }

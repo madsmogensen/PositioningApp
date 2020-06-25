@@ -12,9 +12,16 @@ public class UDPIncoming {
     private Thread t;
     private List<String> tempData = new ArrayList<>();
     private int port;
+    DatagramSocket udpSocket;
 
-    public UDPIncoming(int port){
+    public UDPIncoming(int port) {
         this.port = port;
+        try{
+            udpSocket = new DatagramSocket(11005);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
         t = new Thread() {
             @Override
             public void run(){
@@ -33,11 +40,13 @@ public class UDPIncoming {
     private void listen() throws IOException {
         //Listen here, put into tempData
         while(true){
-            DatagramSocket udpSocket = new DatagramSocket(port); //using the same port to send and receive???
             byte[] msgBuffer = new byte[8000];
+
             DatagramPacket packet = new DatagramPacket(msgBuffer,msgBuffer.length);
+            //System.out.println("Listening on " + udpSocket. + ":" + udpSocket.getPort());
             udpSocket.receive(packet); //the blocking line!
             String text = new String(msgBuffer, 0, packet.getLength());
+            System.out.println("RETRIEVED SOMETHING: " + text);
             tempData.add(text);
         }
     }
@@ -50,8 +59,8 @@ public class UDPIncoming {
         //Return the elements (or a copy) not the reference!
         List<String> returnData = tempData;
         tempData = new ArrayList<>();
-        if(returnData.isEmpty()){
-            System.out.println("ERROR! RETURNDATA IS EMPTY!");
+        if(!returnData.isEmpty()){
+            System.out.println("Temp data returned");
         }
         return returnData;
     }

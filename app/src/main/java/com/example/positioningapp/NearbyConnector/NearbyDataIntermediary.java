@@ -22,9 +22,11 @@ public class NearbyDataIntermediary implements INearbyConnector {
         for(Unit unit : data){
             Node node = (Node)unit;
             if(nodes.containsKey(node.getId())){
-                nodes.get(node.getId()).plus(node);
+                setup.getNodes().get(node.getId()).plus(node);
+                //nodes.get(node.getId()).plus(node);
             }else{
-                nodes.put(node.getId(),node);
+                setup.addNode(node);
+                //nodes.put(node.getId(),node);
             }
         }
     }

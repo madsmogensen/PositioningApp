@@ -16,7 +16,7 @@ import com.example.positioningapp.NearbyConnector.NearbyDataIntermediary;
 import com.example.positioningapp.ServerConnector.ServerDataIntermediary;
 import com.example.positioningapp.R;
 
-import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
     private int mInterval = 100;
     private State state = State.LIVE;
     private List<String> buttonEvents = new ArrayList<>();
+    private List<String> setupList = new ArrayList<>();
+    private boolean nearby = false;
 
     private long lastTime = System.currentTimeMillis();
     private long elapsedTime = 0;
@@ -78,7 +80,11 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
                 currentSetup.playSetup(elapsedTime);
                 break;
         }
-        nearbyConnector.getUpdate(currentSetup, elapsedTime);
+        if(nearby){
+            nearbyConnector.getUpdate(currentSetup, elapsedTime);
+        }else{
+            serverConnection.update(currentSetup, setupList);
+        }
         GUI.update(currentSetup);
     }
 
@@ -122,6 +128,17 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
         state = State.PAUSE;
     }
 
+    public void buttonServerMenu(){
+        System.out.println("SERVER MENU button clicked");
+        nearby = false;
+        serverConnection.sendMessage("CLIENT;GETAVAILABLESETUPS:ALL");
+    }
+
+    public void buttonNearbyMenu(){
+        System.out.println("NEARBY MENU button clicked");
+        nearby = true;
+    }
+
     private void initialize() {
         //Set constants in Common
         System.out.println("initializing");
@@ -130,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
 
         //Instantiate other Modules
         serverConnection = new ServerDataIntermediary();
-        serverConnection.sendMessage("CLIENT;REQUEST:From File");
         nearbyConnector = new NearbyDataIntermediary();
         GUI = new GuiIntermediary(this, buttonEvents);
         lastTime = System.currentTimeMillis();
@@ -139,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
     @Override
     public void actionPerformed(){
         for(String event : buttonEvents){
+            System.out.println("EVENT: " + event);
             switch(event.replaceAll(" ", "")){
                 case "REWIND":
                     buttonRewind();
@@ -160,6 +177,12 @@ public class MainActivity extends AppCompatActivity implements ActionListener {
                     break;
                 case "FORWARDONCE":
                     buttonForwardOnce();
+                    break;
+                case "NEARBYMENU":
+                    buttonNearbyMenu();
+                    break;
+                case "SERVERMENU":
+                    buttonServerMenu();
                     break;
             }
         }

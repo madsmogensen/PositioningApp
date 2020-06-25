@@ -10,6 +10,11 @@ public class Anchor extends Unit{
     }
 
     @Override
+    public void sortCoordinates(){
+
+    }
+
+    @Override
     public void addCoordinate(Coordinate coordinate){
         this.coordinate = coordinate;
     }

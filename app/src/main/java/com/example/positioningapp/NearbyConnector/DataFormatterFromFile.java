@@ -44,7 +44,6 @@ public class DataFormatterFromFile {
 
     private void formatData(){
         for(String rawString : rawData){
-            System.out.println("RawString: " + rawString);
             String[] rawArray = rawString.split(";");
             String id = rawArray[0];
             Coordinate newCoordinate = formatCoordinate(rawArray);

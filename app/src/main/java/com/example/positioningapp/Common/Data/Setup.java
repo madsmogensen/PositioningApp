@@ -5,6 +5,14 @@ import java.util.HashMap;
 public class Setup {
 
     private HashMap<String, Unit> units = new HashMap<>();
+    private String id = "";
+
+    public Setup(){
+
+    }
+    public Setup(String id){
+        this.id = id;
+    }
 
     public HashMap<String, Node> getNodes(){
         HashMap<String, Node> nodes = new HashMap<>();
@@ -14,6 +22,10 @@ public class Setup {
             }
         }
         return nodes;
+    }
+
+    public void addNode(Unit node){
+        units.put(node.id,node);
     }
 
     public HashMap<String, Unit> getAnchors(){

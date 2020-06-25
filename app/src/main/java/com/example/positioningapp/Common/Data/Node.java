@@ -1,6 +1,8 @@
 package com.example.positioningapp.Common.Data;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class Node extends Unit{
@@ -18,6 +20,12 @@ public class Node extends Unit{
     @Override
     public void addCoordinate(Coordinate coordinate){
         coordinates.add(coordinate);
+        sortCoordinates();
+    }
+
+    @Override
+    public void sortCoordinates(){
+        Collections.sort(coordinates);
     }
 
     public List<Coordinate> getCoordinates(){

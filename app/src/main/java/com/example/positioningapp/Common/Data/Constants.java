@@ -15,5 +15,6 @@ public abstract class Constants {
     //add thread security here
     public static Context context;
     public static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+    public static final DateFormat dfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
     public static ConstraintLayout mainLayout;
 }

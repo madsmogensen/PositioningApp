@@ -13,29 +13,31 @@ public class UDPOutgoing{
 
     public UDPOutgoing(int port){
         this.port = port;
+    }
+
+    private void send() {
+        try{
+            DatagramSocket udpSocket = new DatagramSocket(11000);
+            InetAddress serverAddress = InetAddress.getByName(serverIP);
+            byte[] buffer = msg.getBytes();
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, serverAddress,port);
+            udpSocket.send(packet);
+            //System.out.println("Message sent: " + msg);
+            udpSocket.close();
+        }catch(Exception e){
+            System.out.println("Error sending message " + e.toString());
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMessage(String msg){
+        this.msg = msg;
         t = new Thread() {
             @Override
             public void run(){
                 send();
             }
         };
-    }
-
-    private void send() {
-        try{
-            DatagramSocket udpSocket = new DatagramSocket(port);
-            InetAddress serverAddress = InetAddress.getByName(serverIP);
-            byte[] buffer = msg.getBytes();
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, serverAddress,port);
-            udpSocket.send(packet);
-            System.out.println("Message sent: " + msg);
-        }catch(Exception e){
-            System.out.println("Error sending message " + e.toString());
-        }
-    }
-
-    public void sendMessage(String msg){
-        this.msg = msg;
         t.start();
     }
 

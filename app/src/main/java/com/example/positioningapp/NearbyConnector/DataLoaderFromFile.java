@@ -40,9 +40,10 @@ public class DataLoaderFromFile {
         //Load file
         //String fileLocation = "uwb.csv";
         //String fileLocation = "uwb_GoCart.csv";
-        String fileLocation = "uwb_ActualDataGocart.csv";
+        //String fileLocation = "uwb_ActualDataGocart.csv";
+        String fileLocation = "uwb_Heading.csv";
         BufferedReader br;
-        String line = "";
+        String line;
         try{
             br = new BufferedReader(new InputStreamReader(Constants.context.getAssets().open(fileLocation)));
             br.readLine(); //skip first line by reading it before while

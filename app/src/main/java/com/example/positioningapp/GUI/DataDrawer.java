@@ -115,7 +115,7 @@ public class DataDrawer extends View{
         backGroundOffset.postScale(59f,59f);
         backGroundOffset.postTranslate(-37150,-36400);
         backGroundOffset.postConcat(canvasData.matrix);
-        canvas.drawBitmap(background,backGroundOffset,blackPaint);
+        //canvas.drawBitmap(background,backGroundOffset,blackPaint);
 
 
         for(Circle node : nodesToDraw){
@@ -123,7 +123,7 @@ public class DataDrawer extends View{
             int actualX = node.getX();
             int actualY = node.getY();
             //invert y
-            actualY = canvas.getHeight()-actualY;
+            //  actualY = canvas.getHeight()-actualY;
             //float stretchFix = 0.5f;
             //actualY = Math.round(actualY * stretchFix);
             int offsetWidth = node.getBitmap().getWidth()/2;
@@ -173,39 +173,29 @@ public class DataDrawer extends View{
             case MotionEvent.ACTION_DOWN://when first finger down, get first point
                 canvasData.savedMatrix.set(canvasData.matrix);
                 canvasData.start.set(event.getX(), event.getY());
-                //Log.d(canvasThread.TAG, "mode=PAN");
                 canvasData.mode = canvasData.PAN;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN://when 2nd finger down, get second point
                 canvasData.oldDistance = spacing(event);
-                //Log.d(canvasThread.TAG, "oldDist=" + canvasThread.oldDistance);
                 if (canvasData.oldDistance > 10f) {
                     canvasData.savedMatrix.set(canvasData.matrix);
                     midPoint(canvasData.mid, event); //then get the mid point as centre for zoom
                     canvasData.mode = canvasData.ZOOM;
-                    //Log.d(canvasThread.TAG, "mode=ZOOM");
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:       //when both fingers are released, do nothing
                 canvasData.mode = canvasData.NONE;
-                //Log.d(canvasThread.TAG, "mode=NONE");
-                //System.out.println("stopped pan");
                 break;
             case MotionEvent.ACTION_MOVE:     //when fingers are dragged, transform matrix for panning
                 if (canvasData.mode == canvasData.PAN) {
-                    // ...
                     canvasData.matrix.set(canvasData.savedMatrix);
                     canvasData.matrix.postTranslate(event.getX() - canvasData.start.x,
                             event.getY() - canvasData.start.y);
-                    //Log.d(canvasThread.TAG,"Mapping rect");
-                    //System.out.println("panning");
                     canvasData.start.set(event.getX(), event.getY());
                 }
                 else if (canvasData.mode == canvasData.ZOOM) { //if pinch_zoom, calculate distance ratio for zoom
                     float newDist = spacing(event);
-                    //Log.d(canvasThread.TAG, "newDist=" + newDist);
-                    //System.out.println("zooming");
                     if (newDist > 10f) {
                         canvasData.matrix.set(canvasData.savedMatrix);
                         float scale = newDist / canvasData.oldDistance;

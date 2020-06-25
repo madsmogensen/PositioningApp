@@ -2,7 +2,7 @@ package com.example.positioningapp.Common.Data;
 
 import java.util.Date;
 
-public class Coordinate {
+public class Coordinate implements Comparable<Coordinate>{
 
     private int x;
     private int y;
@@ -14,6 +14,18 @@ public class Coordinate {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public int compareTo(Coordinate other){
+        if(dateTime.getTime() > other.dateTime.getTime()){
+            return 1;
+        }
+        else if(dateTime.getTime() < other.dateTime.getTime()){
+            return -1;
+        }
+        else{
+            return 0;
+        }
     }
 
     public Date getRelativeTime(){ return relativeTime; }

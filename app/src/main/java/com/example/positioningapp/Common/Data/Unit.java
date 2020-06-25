@@ -12,6 +12,8 @@ public abstract class Unit {
 
     public abstract void addCoordinate(Coordinate coordinate);
 
+    public abstract void sortCoordinates();
+
     public Node asNode(){
         if(this.isNode()){
             return (Node)this;

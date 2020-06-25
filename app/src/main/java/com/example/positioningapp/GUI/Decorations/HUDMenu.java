@@ -32,6 +32,7 @@ public class HUDMenu extends HUDDecorator {
 
     public HUDMenu(ActionListener listener, List<String> buttonEvents) {
         super(buttonEvents, listener);
+        addActionListener(listener);
         this.context = super.getContext();
         this.mainLayout = super.getMainLayout();
         this.buttonEvents = buttonEvents;
@@ -60,8 +61,10 @@ public class HUDMenu extends HUDDecorator {
 
         List<Button> buttonsInMainMenu = new ArrayList<>();
 
-        Button nearbyMenu = newButton("Nearby Menu","",null);
-        Button serverMenu = newButton("Server Menu","",null);
+        Button nearbyMenu = newButton("Nearby Menu","NEARBYMENU",null);
+        nearbyMenu.setBackgroundResource(R.drawable.icon_nearby);
+        Button serverMenu = newButton("Server Menu","SERVERMENU",null);
+        serverMenu.setBackgroundResource(R.drawable.icon_global);
 
         buttonsInMainMenu.add(nearbyMenu);
         buttonsInMainMenu.add(serverMenu);
@@ -89,7 +92,7 @@ public class HUDMenu extends HUDDecorator {
         newButton.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View view){
-                System.out.println("button clicked " + text);
+                //System.out.println("button clicked " + text);
 
                 if(showHideButtons != null){
                     for(Button btn : showHideButtons){
